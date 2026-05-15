@@ -1,0 +1,2 @@
+-- @connectingmatrix/server package-owned migrations.
+-- Package-specific migrations are appended by each module.
