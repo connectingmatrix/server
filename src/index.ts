@@ -4,8 +4,6 @@ import { PackageObservability } from './observability.js';
 
 export interface RuntimePackageModule extends PackageModule { runtime?: Record<string, unknown>; }
 const registered: RuntimePackageModule[] = [];
-let boundWorkflowExecutor: unknown;
-let boundWorkflowExecutorConfig: unknown;
 function getRuntime(module: RuntimePackageModule | undefined): Record<string, unknown> { return module?.runtime ?? {}; }
 function runtimeOf<T extends Record<string, unknown>>(modules: Map<string, RuntimePackageModule>, name: string): T { return getRuntime(modules.get(name)) as T; }
 function call(target: unknown, method: string, ...args: unknown[]): unknown { const fn = target && typeof target === 'object' ? (target as Record<string, unknown>)[method] : undefined; return typeof fn === 'function' ? fn.apply(target, args) : undefined; }
@@ -77,18 +75,12 @@ export function wirePackageRuntime(modules: RuntimePackageModule[]): RuntimePack
   call(gigaAgents.GigaAgents, 'bindAdapters', { workflows: workflows.Workflows, tree: tree.Tree, nodes: nodes.Nodes, aiAgents: aiAgents.AIAgents, advancedAgents: advancedAgents.AdvancedAIAgents });
   call(workflows.Workflows, 'bindGigaAgents', gigaAgents.GigaAgents);
   call(workflows.Workflows, 'useWorkflowAIAgent', gigaAgents.GigaAgents);
-  if (boundWorkflowExecutor) {
-    call(workflows.Workflows, 'bindExecutorPubSub', boundWorkflowExecutor, boundWorkflowExecutorConfig);
-    call(processMonitoring, 'bindWorkflowExecutorPubsub', boundWorkflowExecutor, boundWorkflowExecutorConfig);
-  }
   return modules;
 }
 
 export const Server = {
   register(module: RuntimePackageModule) { registered.push(module); wirePackageRuntime(registered); return Server; },
   registerMany(modules: RuntimePackageModule[]) { for (const m of modules) registered.push(m); wirePackageRuntime(registered); return Server; },
-  bindWorkflowExecutor(executor: unknown, config?: unknown) { boundWorkflowExecutor = executor; boundWorkflowExecutorConfig = config; wirePackageRuntime(registered); return Server; },
-  bindWorkflowExecutorPubsub(executor: unknown, config?: unknown) { return Server.bindWorkflowExecutor(executor, config); },
   packages() { return [...registered]; },
   graphqlManifest() { const typeDefs = registered.map((m)=>m.graphql?.typeDefs).filter(Boolean); const resolvers: Record<string, Record<string, unknown>> = {}; for (const m of registered) for (const [type, map] of Object.entries(m.graphql?.resolvers ?? {})) resolvers[type] = { ...(resolvers[type] ?? {}), ...(map as Record<string, unknown>) }; return { typeDefs, resolvers }; },
   migrations() { return registered.flatMap((m)=>m.migrations ?? m.graphql?.migrations ?? []); },
@@ -98,14 +90,12 @@ export const Server = {
   processMonitoring: {
     list(filter?: unknown) { return call(processMonitoringRuntime(registered), 'list', filter) ?? []; },
     live(handler?: (rows: unknown)=>unknown) { return call(processMonitoringRuntime(registered), 'live', handler) ?? []; },
-    queueStatus(filter?: unknown) { return call(processMonitoringRuntime(registered), 'queueStatus', filter) ?? []; },
-    runtimeSources() { return call(processMonitoringRuntime(registered), 'runtimeSources') ?? []; },
     logs: { live(processId: string, handler?: (rows: unknown)=>unknown) { const monitor = processMonitoringRuntime(registered) as { logs?: { live?: (processId: string, handler?: (rows: unknown)=>unknown)=>unknown } }; return monitor?.logs?.live?.(processId, handler) ?? []; } },
     abort(processId: string, reason?: string, context?: RequestContext) { return call(processMonitoringRuntime(registered), 'abort', processId, reason, context) ?? { processId, aborted: false, reason: 'process monitor not registered' }; },
     kill(processId: string, reason?: string, context?: RequestContext) { return call(processMonitoringRuntime(registered), 'kill', processId, reason, context) ?? { processId, killed: false, reason: 'process monitor not registered' }; },
   },
-  health(): PackageHealth { return { name: '@connectingmatrix/server', status: 'ok', checkedAt: nowIso(), details: { packages: registered.length, launchers: registered.filter((m)=>m.launcher).length, processMonitoring: Boolean(processMonitoringRuntime(registered)), workflowExecutorBound: Boolean(boundWorkflowExecutor), ...PackageObservability.healthDetails() } }; },
+  health(): PackageHealth { return { name: '@connectingmatrix/server', status: 'ok', checkedAt: nowIso(), details: { packages: registered.length, launchers: registered.filter((m)=>m.launcher).length, processMonitoring: Boolean(processMonitoringRuntime(registered)), ...PackageObservability.healthDetails() } }; },
   launcher: createStubLauncher
 };
-export function createPackage(): PackageModule { return { name: '@connectingmatrix/server', version: '0.4.0', health: () => Server.health(), launcher: createStubLauncher, runtime: { Server, observability: PackageObservability }, routes: [{ method: 'GET', path: '/server/health', handler: () => Server.health() }, { method: 'GET', path: '/server/mcp', handler: () => Server.mcpManifest() }, { method: 'GET', path: '/server/process-monitor', handler: () => Server.processMonitor() }, { method: 'GET', path: '/process-monitoring/list', handler: (request) => Server.processMonitoring.list((request as { query?: unknown }).query) }, { method: 'GET', path: '/process-monitoring/live', handler: () => Server.processMonitoring.live() }, { method: 'GET', path: '/process-monitoring/queue-status', handler: (request) => Server.processMonitoring.queueStatus((request as { query?: unknown }).query) }, { method: 'GET', path: '/process-monitoring/sources', handler: () => Server.processMonitoring.runtimeSources() }, { method: 'GET', path: '/process-monitoring/logs/live', handler: (request) => Server.processMonitoring.logs.live(String((request as { query?: { processId?: string } }).query?.processId ?? '')) }, { method: 'POST', path: '/process-monitoring/abort', handler: (request) => Server.processMonitoring.abort(String((request as { body?: { processId?: string; reason?: string } }).body?.processId ?? ''), (request as { body?: { reason?: string } }).body?.reason, (request as { context?: RequestContext }).context ?? {}) }, { method: 'POST', path: '/process-monitoring/kill', handler: (request) => Server.processMonitoring.kill(String((request as { body?: { processId?: string; reason?: string } }).body?.processId ?? ''), (request as { body?: { reason?: string } }).body?.reason, (request as { context?: RequestContext }).context ?? {}) }, { method: 'GET', path: '/server/launchers', handler: (request) => Server.launchers((request as { context?: RequestContext }).context ?? {}) }] }; }
+export function createPackage(): PackageModule { return { name: '@connectingmatrix/server', version: '0.4.0', health: () => Server.health(), launcher: createStubLauncher, runtime: { Server, observability: PackageObservability }, routes: [{ method: 'GET', path: '/server/health', handler: () => Server.health() }, { method: 'GET', path: '/server/mcp', handler: () => Server.mcpManifest() }, { method: 'GET', path: '/server/process-monitor', handler: () => Server.processMonitor() }, { method: 'GET', path: '/process-monitoring/list', handler: (request) => Server.processMonitoring.list((request as { query?: unknown }).query) }, { method: 'GET', path: '/process-monitoring/live', handler: () => Server.processMonitoring.live() }, { method: 'GET', path: '/process-monitoring/logs/live', handler: (request) => Server.processMonitoring.logs.live(String((request as { query?: { processId?: string } }).query?.processId ?? '')) }, { method: 'POST', path: '/process-monitoring/abort', handler: (request) => Server.processMonitoring.abort(String((request as { body?: { processId?: string; reason?: string } }).body?.processId ?? ''), (request as { body?: { reason?: string } }).body?.reason, (request as { context?: RequestContext }).context ?? {}) }, { method: 'POST', path: '/process-monitoring/kill', handler: (request) => Server.processMonitoring.kill(String((request as { body?: { processId?: string; reason?: string } }).body?.processId ?? ''), (request as { body?: { reason?: string } }).body?.reason, (request as { context?: RequestContext }).context ?? {}) }, { method: 'GET', path: '/server/launchers', handler: (request) => Server.launchers((request as { context?: RequestContext }).context ?? {}) }] }; }
 export * from './contracts.js'; export * from './package-structure.js'; export * from './observability.js'; export * from './launcher.js';

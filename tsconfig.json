@@ -23,6 +23,12 @@
     "vendor/**/*",
     "src/backend/modules/**/*",
     "src/entity/entities/**/*",
-    "src/entity/graphql/**/*"
+    "src/entity/graphql/**/*",
+    "src/client/dataloaders/**/*",
+    "src/client/screens/**/*",
+    "src/client/components/**/*",
+    "src/client/designer/**/*",
+    "src/client/shell/**/*",
+    "src/playground-ui/**/*"
   ]
 }

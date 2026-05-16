@@ -4,7 +4,7 @@ Thin package composition layer for middleware, GraphQL merge, migrations, MCP, l
 
 ## Ownership
 
-This package owns its `src/ui`, `src/backend`, `src/entity`, GraphQL bundle, migrations, health/status, launcher, and package contracts. It can be included in backend or UI without assuming a monorepo.
+This package owns its `src/client`, `src/backend`, `src/entity`, GraphQL bundle, migrations, health/status, launcher, and package contracts. It can be included in backend or UI without assuming a monorepo.
 
 ## Public contracts
 
@@ -67,7 +67,7 @@ GraphQL namespace and routes are returned by `createPackage()`. Routes include h
 
 ## Folder counts
 
-- `src/ui`: 2 files
+- `src/client`: 2 files
 - `src/backend`: 165 files
 - `src/entity`: 26 files
 - `migrations`: 20 files
