@@ -1,8 +1,8 @@
 import { randomUUID } from 'node:crypto';
 import { Executor } from '@workflow/executor';
 import { readChatParityFixture } from '@connectingmatrix/chat/services/chat/workflow/runtime/chat-parity-fixtures';
-import { bindWorkflowCredentials } from '@connectingmatrix/workflows/services/workflow/runtime/bindWorkflowCredentials';
-import { normalizeWorkflowSnapshotIdentity } from '@connectingmatrix/workflows/services/workflow/runtime/workflow-identity';
+import { bindWorkflowCredentials } from '@connectingmatrix/workflow-driver/services/workflow/runtime/bindWorkflowCredentials';
+import { normalizeWorkflowSnapshotIdentity } from '@connectingmatrix/workflow-driver/services/workflow/runtime/workflow-identity';
 import { buildWorkflowSearchText, createWorkflowSecret } from '@giga/general/services/graphql/resolvers/integration/base';
 import { SupabaseClientAdmin } from '@giga/general/decorators/integration/supabase-admin-client';
 import { mcpToolCypher } from './mcp-live.workflow-cypher';

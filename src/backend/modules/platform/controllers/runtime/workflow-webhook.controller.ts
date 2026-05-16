@@ -15,12 +15,12 @@ import {
   requiresWorkflowWebhookSecret,
   validateWorkflowWebhookInvocation,
   verifyWorkflowSecret,
-} from '@connectingmatrix/workflows/services/workflow/runtime/webhook';
+} from '@connectingmatrix/workflow-driver/services/workflow/runtime/webhook';
 import {
   createQueuedWebhookWorkflowExecution,
   executeQueuedWebhookWorkflow,
   loadWorkflowWebhookExecutionStatus,
-} from '@connectingmatrix/workflows/services/workflow/queue';
+} from '@connectingmatrix/workflow-driver/services/workflow/queue';
 import { assertAIPolicyCreditsAvailableDirect, recordAIPolicyUsageDirect } from '@giga/plan-policy/services/plan-policy/runtime/usage';
 import { assertPlanPolicyPermissionDirect, readWorkflowRuntimeLimitsDirect } from '@giga/plan-policy/services/plan-policy/runtime/enforcement';
 import { SupabaseClientAdmin } from '@giga/general/decorators/integration/supabase-admin-client';

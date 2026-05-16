@@ -6,7 +6,7 @@ import https from 'node:https';
 import path from 'node:path';
 import { createClient } from '@supabase/supabase-js';
 import { EnvLoader } from '@giga/shared/lib/env';
-import { waitForCondition } from '@connectingmatrix/workflows/services/workflow/queue/__tests__/workflow-webhook-live.runtime.fixture';
+import { waitForCondition } from '@connectingmatrix/workflow-driver/services/workflow/queue/__tests__/workflow-webhook-live.runtime.fixture';
 import { signAppAccessToken } from '@giga/permissions/services/auth/app-auth-token';
 import { SupabaseClientAdmin } from '@giga/general/decorators/integration/supabase-admin-client';
 

@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { randomUUID } from 'node:crypto';
 import { ChildProcess } from 'node:child_process';
 import { after, before, test } from 'node:test';
-import { waitForCondition } from '@connectingmatrix/workflows/services/workflow/queue/__tests__/workflow-webhook-live.runtime.fixture';
+import { waitForCondition } from '@connectingmatrix/workflow-driver/services/workflow/queue/__tests__/workflow-webhook-live.runtime.fixture';
 import { SupabaseClientAdmin } from '@giga/general/decorators/integration/supabase-admin-client';
 import { createUserSessionHeader, graphqlRequest, startLiveApi, stopLiveApi } from './activity-log-live.runtime.fixture';
 

@@ -4,7 +4,7 @@ import { BadRequestError } from 'routing-controllers';
 import { Service } from 'typedi';
 import { getCurrentUserIdOrThrow, isCurrentUserRootUser } from '@giga/shared/lib/helper';
 import { OrganisationEntity, WorkflowEntity } from '@connectingmatrix/orm/repositories/entities';
-import type { WorkflowDefinition } from '@connectingmatrix/workflows/services/workflow/contracts/types';
+import type { WorkflowDefinition } from '@connectingmatrix/workflow-driver/services/workflow/contracts/types';
 import type { OrganizationAccessContext, OrganizationAction, OrganizationModule } from '@giga/shared/types/contracts/org.types';
 import type { WorkflowNodeSearchRow, WorkflowRow } from '@giga/shared/types/contracts/graphql.types';
 

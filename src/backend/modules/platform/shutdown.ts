@@ -1,5 +1,5 @@
 import { Executor } from '@workflow/executor';
-import '@connectingmatrix/workflows/services/workflow/runtime/setupWorkflowExecutor';
+import '@connectingmatrix/workflow-driver/services/workflow/runtime/setupWorkflowExecutor';
 import type { Server } from 'http';
 
 let isStopping = false;

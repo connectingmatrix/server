@@ -37,9 +37,9 @@ import {
   WorkflowVersionEntity,
 } from '@connectingmatrix/orm/repositories/entities';
 import { resolveChatWorkflow } from '@connectingmatrix/chat/services/chat/workflow/runtime/workflow-chat';
-import { listWorkflowExecutionOptions } from '@connectingmatrix/workflows/services/workflow/contracts/execution-reference';
+import { listWorkflowExecutionOptions } from '@connectingmatrix/workflow-driver/services/workflow/contracts/execution-reference';
 import { openai } from '@giga/shared/services/common/openai-client';
-import { executeWorkflowMutation } from '@connectingmatrix/workflows/services/workflow';
+import { executeWorkflowMutation } from '@connectingmatrix/workflow-driver/services/workflow';
 import {
   createUserWorkflowNode,
   deleteUserWorkflowNode,
@@ -52,7 +52,7 @@ import {
 } from '@connectingmatrix/nodes/services/workflow/user-nodes';
 import { normalizeSourceFiles, validateNodeSchema } from '@connectingmatrix/nodes/services/workflow/user-nodes/io/normalize';
 import { reviewWorkflowNodePackageRules } from '@connectingmatrix/nodes/services/workflow/user-nodes/runtime/rules';
-import { WorkflowAuthModeEnum, WorkflowDefinition, WorkflowExecutionModeEnum } from '@connectingmatrix/workflows/services/workflow/contracts/types';
+import { WorkflowAuthModeEnum, WorkflowDefinition, WorkflowExecutionModeEnum } from '@connectingmatrix/workflow-driver/services/workflow/contracts/types';
 import { buildPermissionContext } from '@giga/permissions/services/auth/permission-context';
 import { PermissionContextKey } from '@giga/general/services/graphql/resolver-access.constants';
 import {

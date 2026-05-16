@@ -16,7 +16,7 @@ import { SupabaseClientAdmin } from '@giga/general/decorators/integration/supaba
 import { GraphqlMiddleware } from '@giga/general/middleware';
 import { GlobalErrorHandler } from './middleware/global-error-handler.middleware';
 import { requestIdMiddleware } from './middleware/request-id.middleware';
-import '@connectingmatrix/workflows/services/workflow/runtime/setupWorkflowExecutor';
+import '@connectingmatrix/workflow-driver/services/workflow/runtime/setupWorkflowExecutor';
 import { registerShutdown } from './shutdown';
 import { AgentAppLiveController, GraphqlController, McpController, WorkflowFixturesController, WorkflowWebhookController } from './controllers';
 

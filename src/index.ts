@@ -1,5 +1,5 @@
 import { nowIso, type PackageHealth, type PackageModule, type RequestContext } from './contracts.js';
-import { createStubLauncher } from './launcher.js';
+import { createPackageStatusPanel } from './services/package-status.service.js';
 import { PackageObservability } from './observability.js';
 
 export interface RuntimePackageModule extends PackageModule { runtime?: Record<string, unknown>; }
@@ -35,7 +35,7 @@ export function wirePackageRuntime(modules: RuntimePackageModule[]): RuntimePack
   }
 
   const chat = runtimeOf<{ Chat?: unknown }>(byName, '@connectingmatrix/chat');
-  const workflows = runtimeOf<{ workflowSlashCommands?: unknown[]; Workflows?: unknown }>(byName, '@connectingmatrix/workflows');
+  const workflows = runtimeOf<{ workflowSlashCommands?: unknown[]; Workflows?: unknown }>(byName, '@connectingmatrix/workflow-driver');
   const tree = runtimeOf<{ treeSlashCommands?: unknown[]; Tree?: unknown }>(byName, '@giga/tree');
   const file = runtimeOf<{ File?: unknown }>(byName, '@connectingmatrix/file');
   const drive = runtimeOf<{ Drive?: unknown }>(byName, '@giga/drive');
@@ -43,7 +43,7 @@ export function wirePackageRuntime(modules: RuntimePackageModule[]): RuntimePack
   const aiAgents = runtimeOf<{ AIAgents?: unknown }>(byName, '@connectingmatrix/ai-agents');
   const advancedAgents = runtimeOf<{ AdvancedAIAgents?: unknown }>(byName, '@connectingmatrix/ai-agents-advanced');
   const swarm = runtimeOf<{ AgentSwarm?: unknown }>(byName, '@connectingmatrix/agent-swarm');
-  const gigaAgents = runtimeOf<{ GigaAgents?: unknown }>(byName, '@connectingmatrix/giga-agents');
+  const gigaAgents = runtimeOf<{ GigaAgents?: unknown }>(byName, '@connectingmatrix/agents');
   const nodes = runtimeOf<{ Nodes?: unknown }>(byName, '@connectingmatrix/nodes');
 
   if (workflows.workflowSlashCommands) call(chat.Chat, 'registerSlashCommands', workflows.workflowSlashCommands);
@@ -95,7 +95,7 @@ export const Server = {
     kill(processId: string, reason?: string, context?: RequestContext) { return call(processMonitoringRuntime(registered), 'kill', processId, reason, context) ?? { processId, killed: false, reason: 'process monitor not registered' }; },
   },
   health(): PackageHealth { return { name: '@connectingmatrix/server', status: 'ok', checkedAt: nowIso(), details: { packages: registered.length, launchers: registered.filter((m)=>m.launcher).length, processMonitoring: Boolean(processMonitoringRuntime(registered)), ...PackageObservability.healthDetails() } }; },
-  launcher: createStubLauncher
+  launcher: createPackageStatusPanel
 };
-export function createPackage(): PackageModule { return { name: '@connectingmatrix/server', version: '0.4.0', health: () => Server.health(), launcher: createStubLauncher, runtime: { Server, observability: PackageObservability }, routes: [{ method: 'GET', path: '/server/health', handler: () => Server.health() }, { method: 'GET', path: '/server/mcp', handler: () => Server.mcpManifest() }, { method: 'GET', path: '/server/process-monitor', handler: () => Server.processMonitor() }, { method: 'GET', path: '/process-monitoring/list', handler: (request) => Server.processMonitoring.list((request as { query?: unknown }).query) }, { method: 'GET', path: '/process-monitoring/live', handler: () => Server.processMonitoring.live() }, { method: 'GET', path: '/process-monitoring/logs/live', handler: (request) => Server.processMonitoring.logs.live(String((request as { query?: { processId?: string } }).query?.processId ?? '')) }, { method: 'POST', path: '/process-monitoring/abort', handler: (request) => Server.processMonitoring.abort(String((request as { body?: { processId?: string; reason?: string } }).body?.processId ?? ''), (request as { body?: { reason?: string } }).body?.reason, (request as { context?: RequestContext }).context ?? {}) }, { method: 'POST', path: '/process-monitoring/kill', handler: (request) => Server.processMonitoring.kill(String((request as { body?: { processId?: string; reason?: string } }).body?.processId ?? ''), (request as { body?: { reason?: string } }).body?.reason, (request as { context?: RequestContext }).context ?? {}) }, { method: 'GET', path: '/server/launchers', handler: (request) => Server.launchers((request as { context?: RequestContext }).context ?? {}) }] }; }
-export * from './contracts.js'; export * from './package-structure.js'; export * from './observability.js'; export * from './launcher.js';
+export function createPackage(): PackageModule { return { name: '@connectingmatrix/server', version: '0.4.0', health: () => Server.health(), launcher: createPackageStatusPanel, runtime: { Server, observability: PackageObservability }, routes: [{ method: 'GET', path: '/server/health', handler: () => Server.health() }, { method: 'GET', path: '/server/mcp', handler: () => Server.mcpManifest() }, { method: 'GET', path: '/server/process-monitor', handler: () => Server.processMonitor() }, { method: 'GET', path: '/process-monitoring/list', handler: (request) => Server.processMonitoring.list((request as { query?: unknown }).query) }, { method: 'GET', path: '/process-monitoring/live', handler: () => Server.processMonitoring.live() }, { method: 'GET', path: '/process-monitoring/logs/live', handler: (request) => Server.processMonitoring.logs.live(String((request as { query?: { processId?: string } }).query?.processId ?? '')) }, { method: 'POST', path: '/process-monitoring/abort', handler: (request) => Server.processMonitoring.abort(String((request as { body?: { processId?: string; reason?: string } }).body?.processId ?? ''), (request as { body?: { reason?: string } }).body?.reason, (request as { context?: RequestContext }).context ?? {}) }, { method: 'POST', path: '/process-monitoring/kill', handler: (request) => Server.processMonitoring.kill(String((request as { body?: { processId?: string; reason?: string } }).body?.processId ?? ''), (request as { body?: { reason?: string } }).body?.reason, (request as { context?: RequestContext }).context ?? {}) }, { method: 'GET', path: '/server/launchers', handler: (request) => Server.launchers((request as { context?: RequestContext }).context ?? {}) }] }; }
+export * from './contracts.js'; export * from './package-structure.js'; export * from './observability.js'; export * from './services/package-status.service.js';

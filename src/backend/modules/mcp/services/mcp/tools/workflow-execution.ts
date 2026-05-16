@@ -1,6 +1,6 @@
 import { BadRequestError } from 'routing-controllers';
 import { toSafeString } from 'giga-ai-helper';
-import { executeWorkflowMutation } from '@connectingmatrix/workflows/services/workflow';
+import { executeWorkflowMutation } from '@connectingmatrix/workflow-driver/services/workflow';
 import { isCurrentUserRootUser } from '@giga/shared/lib/helper';
 import {
   OrganisationEntity,
@@ -10,7 +10,7 @@ import {
   WorkflowVersionEntity,
   assertBillingExecutionAccess,
 } from '@connectingmatrix/orm/repositories/entities';
-import { WorkflowAuthModeEnum, WorkflowExecutionModeEnum } from '@connectingmatrix/workflows/services/workflow/contracts/types';
+import { WorkflowAuthModeEnum, WorkflowExecutionModeEnum } from '@connectingmatrix/workflow-driver/services/workflow/contracts/types';
 import { boolProp, inputRecord, jsonProp, schema, stringProp, workflowScope } from './common';
 import type { GigaMcpContext } from '../context';
 import type { GigaMcpToolGroup } from './common';
