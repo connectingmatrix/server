@@ -1,0 +1,55 @@
+scalar JSON
+
+type AgentAppInspection {
+  ok: Boolean!
+  liveUrl: String!
+  checkedAt: String!
+  checks: JSON!
+  errors: [String!]!
+}
+
+type AgentAppDeployment {
+  id: ID!
+  appId: ID
+  projectId: ID
+  status: String!
+  appName: String!
+  appSlug: String!
+  buildId: String!
+  liveUrl: String
+  healthUrl: String
+  manifestUrl: String
+  manifest: JSON!
+  inspection: JSON!
+  createdAt: String
+}
+
+input DeployAgentAppInput {
+  appName: String!
+  appSlug: String
+  chatId: ID
+  workflowId: ID
+  runId: String
+  files: [GeneratedAppFileInput!]!
+  entryFile: String
+  prompt: String
+  metadata: GeneratedAppMetadataInput
+}
+
+input GeneratedAppFileInput { path: String!, content: String!, contentType: String }
+input GeneratedAppMetadataInput { test: String, source: String, agentLive: Boolean, chatId: ID, workflowId: ID, runId: String }
+input GeneratedAppBuildInput { appName: String!, appSlug: String, chatId: ID, workflowId: ID, runId: String, files: [GeneratedAppFileInput!]!, entryFile: String, prompt: String, metadata: GeneratedAppMetadataInput }
+
+input InspectAgentAppInput {
+  deploymentId: ID!
+  liveUrl: String!
+}
+
+extend type Query {
+  agentAppDeployment(id: ID!): AgentAppDeployment
+}
+
+extend type Mutation {
+  deployAgentApp(input: DeployAgentAppInput!): AgentAppDeployment!
+  inspectAgentApp(input: InspectAgentAppInput!): AgentAppInspection!
+}

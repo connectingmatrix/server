@@ -1,0 +1,33 @@
+type AdvancedAgentOsResult {
+  status: String
+  summary: String
+  output: JSON
+  confirmationRequired: Boolean
+}
+
+input AgentMemoryToolInput { agentId: ID, userId: ID, organizationId: ID, sessionId: ID, content: String, query: String, kind: String, scopeType: String, scopeId: ID, importance: Float, rating: Float, comment: String, limit: Int }
+input AgentSwarmToolInput { agentId: ID, ownerType: String, ownerId: ID, organizationId: ID, chatId: ID, goal: String, message: String, prompt: String, roles: [String!], swarmId: ID }
+input AgentSoftwareToolInput { agentId: ID, userId: ID, organizationId: ID, chatId: ID, name: String, prompt: String, modules: [String!], local: Boolean, port: Int, projectId: ID, command: String, runner: String, deploymentKind: String, localRunnerId: ID, url: String }
+input AgentGisDataInput { label: String, longitude: Float, latitude: Float, value: Float }
+input AgentGisToolInput { prompt: String, message: String, title: String, country: String, projection: String, geojsonUrl: String, longitudeField: String, latitudeField: String, labelField: String, valueField: String, colorScale: String, legendTitle: String, data: [AgentGisDataInput!] }
+input AgentImageToolInput { operation: String, prompt: String, message: String, instruction: String, sourceUri: String, path: String, outputFormat: String, title: String, frameWidth: Int, frameHeight: Int, columns: Int, rows: Int }
+input AgentWorkflowToolInput { workflowId: ID, executionId: ID, runId: ID, prompt: String, message: String, organizationId: ID, userId: ID, sourceFile: String, target: String, scenario: String, bucket: String, domain: String, workflowKind: String, first: Int, offset: Int, name: String, description: String, parentEntity: String, parentId: ID, relation: String }
+input AgentLocalRunnerToolInput { runnerId: ID, hostId: ID, ownerType: String, ownerId: ID, organizationId: ID, hostName: String, port: Int, projectId: ID, jobKind: String, risk: String, command: String, args: [String!] }
+input AgentEntityToolInput { operation: String, entity: String, id: ID, slug: String, name: String, title: String, parentEntity: String, parentId: ID, parentName: String, childEntity: String, childId: ID, childName: String, relation: String }
+input AdvancedAgentToolPayloadInput { memory: AgentMemoryToolInput, swarm: AgentSwarmToolInput, software: AgentSoftwareToolInput, gis: AgentGisToolInput, image: AgentImageToolInput, workflow: AgentWorkflowToolInput, localRunner: AgentLocalRunnerToolInput, entity: AgentEntityToolInput, app: GeneratedAppBuildInput }
+
+input AdvancedAgentOsInput {
+  tool: String!
+  operation: String
+  input: AdvancedAgentToolPayloadInput!
+  confirmed: Boolean
+}
+
+extend type Query {
+  advancedAgentGaps(input: AgentWorkflowToolInput): JSON
+  advancedAgentTaskGraph(input: AgentWorkflowToolInput): JSON
+}
+
+extend type Mutation {
+  executeAdvancedAgentTool(input: AdvancedAgentOsInput!): AdvancedAgentOsResult!
+}

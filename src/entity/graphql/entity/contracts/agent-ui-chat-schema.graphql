@@ -1,0 +1,19 @@
+scalar JSON
+
+input AgentUiChatBootstrapInput {
+  chatId: String
+  scope: AgentUiScopeInput
+}
+
+type AgentUiChatBootstrapPayload {
+  endpoint: String!
+  transport: String!
+  chatId: String
+  selectedAgentId: String
+  availableAgents: [SelectableAIAgent!]!
+  outputContract: AgentOutputContract!
+}
+
+extend type Query {
+  agentUiChatBootstrap(input: AgentUiChatBootstrapInput): AgentUiChatBootstrapPayload!
+}

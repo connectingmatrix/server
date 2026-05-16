@@ -1,0 +1,168 @@
+# AGENTS.md
+
+## Directory Context
+
+- Path: `packages/apps/general/src/services/credentials/runtime`
+- This folder owns the production code files in this folder.
+
+## Contract
+
+- Keep all code in this folder aligned with its layer package boundary.
+- If any production code file in this folder is updated, update this AGENTS.md in the same change.
+- This AGENTS file must document each owned file purpose, input/output shape, role rules, logic gates, functions, exports, and line snippets.
+
+## File Usage Specification
+
+### `crypto.ts`
+- Purpose: Defines module behavior owned by this usage folder.
+- Owning use cases: Runtime and application flows that import this file through package boundaries.
+- Input shape: Typed arguments and imported contracts declared in this file signatures.
+- Output shape: Typed return values, thrown errors, and exported contracts declared in this file.
+- Role interaction rules:
+  - `User`: Allowed through explicit service/resolver authorization and scoped data access only.
+  - `Root User`: Can execute elevated flows where caller context resolves root privileges.
+  - `Super Admin`: Can execute organization-level privileged flows where membership and role gates pass.
+- Logic gates summary:
+  - Authorization and scope checks must run before read/write side effects.
+  - Entity/ORM boundaries must remain the source of persisted data access.
+  - MCP or GraphQL proxy boundaries must avoid duplicated domain validation.
+- Functions (all):
+  - `resolveKey` (L7-L7, function)
+  - `encryptCredentialJson` (L31-L31, function)
+  - `decryptCredentialJson` (L41-L41, function)
+- Exports:
+  - `encryptCredentialJson` (L31)
+  - `decryptCredentialJson` (L41)
+- Key snippets and use-case mapping:
+  - `L7-L7`: Implements `resolveKey` for this module use case.
+  - `L31-L31`: Implements `encryptCredentialJson` for this module use case.
+  - `L41-L41`: Implements `decryptCredentialJson` for this module use case.
+### `repository.ts`
+- Purpose: Defines module behavior owned by this usage folder.
+- Owning use cases: Runtime and application flows that import this file through package boundaries.
+- Input shape: Typed arguments and imported contracts declared in this file signatures.
+- Output shape: Typed return values, thrown errors, and exported contracts declared in this file.
+- Role interaction rules:
+  - `User`: Allowed through explicit service/resolver authorization and scoped data access only.
+  - `Root User`: Can execute elevated flows where caller context resolves root privileges.
+  - `Super Admin`: Can execute organization-level privileged flows where membership and role gates pass.
+- Logic gates summary:
+  - Authorization and scope checks must run before read/write side effects.
+  - Entity/ORM boundaries must remain the source of persisted data access.
+  - MCP or GraphQL proxy boundaries must avoid duplicated domain validation.
+- Functions (all):
+  - `listCredentialRows` (L5-L5, function)
+  - `getCredentialRowById` (L18-L18, function)
+  - `createCredentialRow` (L23-L23, function)
+  - `updateCredentialRow` (L47-L47, function)
+  - `updateCredentialStatusRow` (L63-L63, function)
+  - `deleteCredentialRow` (L69-L69, function)
+  - `updateCredentialExecutionTelemetryRow` (L73-L73, function)
+- Exports:
+  - `listCredentialRows` (L5)
+  - `getCredentialRowById` (L18)
+  - `createCredentialRow` (L23)
+  - `updateCredentialRow` (L47)
+  - `updateCredentialStatusRow` (L63)
+  - `deleteCredentialRow` (L69)
+  - `updateCredentialExecutionTelemetryRow` (L73)
+- Key snippets and use-case mapping:
+  - `L5-L5`: Implements `listCredentialRows` for this module use case.
+  - `L18-L18`: Implements `getCredentialRowById` for this module use case.
+  - `L23-L23`: Implements `createCredentialRow` for this module use case.
+  - `L47-L47`: Implements `updateCredentialRow` for this module use case.
+  - `L63-L63`: Implements `updateCredentialStatusRow` for this module use case.
+  - `L69-L69`: Implements `deleteCredentialRow` for this module use case.
+  - `L73-L73`: Implements `updateCredentialExecutionTelemetryRow` for this module use case.
+### `service.ts`
+- Purpose: Defines module behavior owned by this usage folder.
+- Owning use cases: Runtime and application flows that import this file through package boundaries.
+- Input shape: Typed arguments and imported contracts declared in this file signatures.
+- Output shape: Typed return values, thrown errors, and exported contracts declared in this file.
+- Role interaction rules:
+  - `User`: Allowed through explicit service/resolver authorization and scoped data access only.
+  - `Root User`: Can execute elevated flows where caller context resolves root privileges.
+  - `Super Admin`: Can execute organization-level privileged flows where membership and role gates pass.
+- Logic gates summary:
+  - Authorization and scope checks must run before read/write side effects.
+  - Entity/ORM boundaries must remain the source of persisted data access.
+  - MCP or GraphQL proxy boundaries must avoid duplicated domain validation.
+- Functions (all):
+  - `normalizeString` (L27-L27, function)
+  - `isJsonObject` (L31-L31, function)
+  - `deriveScope` (L35-L35, function)
+  - `buildScopeInputFromRow` (L41-L41, function)
+  - `validateFieldValue` (L49-L49, function)
+  - `validateMcpCredentialValues` (L86-L86, function)
+  - `validateCredentialValues` (L119-L119, function)
+  - `toCredentialRecordPayload` (L147-L147, function)
+  - `scopeFilter` (L170-L170, function)
+  - `getCredentialCatalogPayload` (L182-L182, function)
+  - `listCredentials` (L186-L186, function)
+  - `getCredential` (L194-L194, function)
+  - `resolveCredentialForExecution` (L207-L207, function)
+  - `createCredential` (L233-L233, function)
+  - `updateCredential` (L258-L258, function)
+  - `deleteCredential` (L283-L283, function)
+  - `activateCredential` (L294-L294, function)
+- Exports:
+  - `validateCredentialValues` (L119)
+  - `getCredentialCatalogPayload` (L182)
+  - `listCredentials` (L186)
+  - `getCredential` (L194)
+  - `resolveCredentialForExecution` (L207)
+  - `createCredential` (L233)
+  - `updateCredential` (L258)
+  - `deleteCredential` (L283)
+  - `activateCredential` (L294)
+- Key snippets and use-case mapping:
+  - `L27-L27`: Implements `normalizeString` for this module use case.
+  - `L31-L31`: Implements `isJsonObject` for this module use case.
+  - `L35-L35`: Implements `deriveScope` for this module use case.
+  - `L41-L41`: Implements `buildScopeInputFromRow` for this module use case.
+  - `L49-L49`: Implements `validateFieldValue` for this module use case.
+  - `L86-L86`: Implements `validateMcpCredentialValues` for this module use case.
+  - `L119-L119`: Implements `validateCredentialValues` for this module use case.
+  - `L147-L147`: Implements `toCredentialRecordPayload` for this module use case.
+  - `L170-L170`: Implements `scopeFilter` for this module use case.
+  - `L182-L182`: Implements `getCredentialCatalogPayload` for this module use case.
+  - `L186-L186`: Implements `listCredentials` for this module use case.
+  - `L194-L194`: Implements `getCredential` for this module use case.
+  - `L207-L207`: Implements `resolveCredentialForExecution` for this module use case.
+  - `L233-L233`: Implements `createCredential` for this module use case.
+  - `L258-L258`: Implements `updateCredential` for this module use case.
+  - `L283-L283`: Implements `deleteCredential` for this module use case.
+  - `L294-L294`: Implements `activateCredential` for this module use case.
+
+## Non-Negotiable Coding Standards
+
+- Never ever write supabase.from we have entities always load data through it
+- Do not use `supabase.from` or `input.from` directly. Load data through entities and the ORM.
+- Do not add autofills
+- Do not add placeholder, do not add normalisation.
+- Find and fix the root cause instead of adding the fallback.
+- Do not add fallbacks. Fix the logic.
+- Everything should be typed dont use unknown, never, any
+- Do not use JS-style safe/coercion helper functions.
+- Do not use `to*` functions like `toPayload`.
+- Do not create map functions.
+- Do not check types like `type === Array` or `type === string`.
+- Use the `||` operator for comparison.
+- Do not write a code file bigger than 70-100 lines.
+- Try to generalise multiple lines of code into fewer lines.
+- After writing code, recheck patterns across the workspace to remove duplications.
+- Do not invent functionality. Ask the user if it already exists somewhere.
+- Prefer the smallest correct change over broad refactors.
+- Preserve the repo's existing style, structure, and package manager.
+- Avoid destructive git commands unless explicitly requested.
+- Keep memory entries concise, factual, and tied to the files or behavior that changed.
+- Entity table name should come from the Entity and not direct usage.
+- Function naming should be .create, .delete .find .update .find .findBy .deleteBy
+- Disallowed naming conventions are createRows, listRows and any programatic name for the entity.
+- Importing supabase in the entities is disallowed. Upgrade the ORM file is something is not supported by entity. Orm is present at @gigav2/orm
+- If Create, Update, Delete, Find is unable to do any thing stop the coding and inform the user of your updates first.
+- Do not create proxy or additional functions for create, update, delete
+- Keep ORM generic do not add Entity functions in the ORM
+- MCP.ts will execute inner graphql for the operations they will not implement any
+- JSON is disallowed in the Graphql Schema use proper types only
+- Dont use zod for typing

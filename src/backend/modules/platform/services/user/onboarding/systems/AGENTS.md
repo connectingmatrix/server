@@ -1,0 +1,181 @@
+# AGENTS.md
+
+## Directory Context
+
+- Path: `packages/apps/general/src/services/user/onboarding/systems`
+- This folder owns the production code files in this folder.
+
+## Contract
+
+- Keep all code in this folder aligned with its layer package boundary.
+- If any production code file in this folder is updated, update this AGENTS.md in the same change.
+- This AGENTS file must document each owned file purpose, input/output shape, role rules, logic gates, functions, exports, and line snippets.
+
+## File Usage Specification
+
+### `constants.ts`
+- Purpose: Defines module behavior owned by this usage folder.
+- Owning use cases: Runtime and application flows that import this file through package boundaries.
+- Input shape: Typed arguments and imported contracts declared in this file signatures.
+- Output shape: Typed return values, thrown errors, and exported contracts declared in this file.
+- Role interaction rules:
+  - `User`: Allowed through explicit service/resolver authorization and scoped data access only.
+  - `Root User`: Can execute elevated flows where caller context resolves root privileges.
+  - `Super Admin`: Can execute organization-level privileged flows where membership and role gates pass.
+- Logic gates summary:
+  - Authorization and scope checks must run before read/write side effects.
+  - Entity/ORM boundaries must remain the source of persisted data access.
+  - MCP or GraphQL proxy boundaries must avoid duplicated domain validation.
+- Functions (all):
+  - None detected by static scan.
+- Exports:
+  - None
+- Key snippets and use-case mapping:
+  - `L1-L9`: File-level constants/types behavior.
+### `guide-content.ts`
+- Purpose: Defines module behavior owned by this usage folder.
+- Owning use cases: Runtime and application flows that import this file through package boundaries.
+- Input shape: Typed arguments and imported contracts declared in this file signatures.
+- Output shape: Typed return values, thrown errors, and exported contracts declared in this file.
+- Role interaction rules:
+  - `User`: Allowed through explicit service/resolver authorization and scoped data access only.
+  - `Root User`: Can execute elevated flows where caller context resolves root privileges.
+  - `Super Admin`: Can execute organization-level privileged flows where membership and role gates pass.
+- Logic gates summary:
+  - Authorization and scope checks must run before read/write side effects.
+  - Entity/ORM boundaries must remain the source of persisted data access.
+  - MCP or GraphQL proxy boundaries must avoid duplicated domain validation.
+- Functions (all):
+  - `renderPorts` (L12-L12, function)
+  - `renderNodeReference` (L19-L19, function)
+  - `buildGettingStartedMarkdown` (L27-L27, function)
+- Exports:
+  - `buildGettingStartedMarkdown` (L27)
+- Key snippets and use-case mapping:
+  - `L12-L12`: Implements `renderPorts` for this module use case.
+  - `L19-L19`: Implements `renderNodeReference` for this module use case.
+  - `L27-L27`: Implements `buildGettingStartedMarkdown` for this module use case.
+### `pdf.ts`
+- Purpose: Defines module behavior owned by this usage folder.
+- Owning use cases: Runtime and application flows that import this file through package boundaries.
+- Input shape: Typed arguments and imported contracts declared in this file signatures.
+- Output shape: Typed return values, thrown errors, and exported contracts declared in this file.
+- Role interaction rules:
+  - `User`: Allowed through explicit service/resolver authorization and scoped data access only.
+  - `Root User`: Can execute elevated flows where caller context resolves root privileges.
+  - `Super Admin`: Can execute organization-level privileged flows where membership and role gates pass.
+- Logic gates summary:
+  - Authorization and scope checks must run before read/write side effects.
+  - Entity/ORM boundaries must remain the source of persisted data access.
+  - MCP or GraphQL proxy boundaries must avoid duplicated domain validation.
+- Functions (all):
+  - `escapePdfText` (L9-L9, function)
+  - `wrapLine` (L13-L13, function)
+  - `readLines` (L32-L32, function)
+  - `object` (L44-L44, function)
+  - `renderGettingStartedPdf` (L48-L48, function)
+- Exports:
+  - `renderGettingStartedPdf` (L48)
+- Key snippets and use-case mapping:
+  - `L9-L9`: Implements `escapePdfText` for this module use case.
+  - `L13-L13`: Implements `wrapLine` for this module use case.
+  - `L32-L32`: Implements `readLines` for this module use case.
+  - `L44-L44`: Implements `object` for this module use case.
+  - `L48-L48`: Implements `renderGettingStartedPdf` for this module use case.
+### `service.ts`
+- Purpose: Defines module behavior owned by this usage folder.
+- Owning use cases: Runtime and application flows that import this file through package boundaries.
+- Input shape: Typed arguments and imported contracts declared in this file signatures.
+- Output shape: Typed return values, thrown errors, and exported contracts declared in this file.
+- Role interaction rules:
+  - `User`: Allowed through explicit service/resolver authorization and scoped data access only.
+  - `Root User`: Can execute elevated flows where caller context resolves root privileges.
+  - `Super Admin`: Can execute organization-level privileged flows where membership and role gates pass.
+- Logic gates summary:
+  - Authorization and scope checks must run before read/write side effects.
+  - Entity/ORM boundaries must remain the source of persisted data access.
+  - MCP or GraphQL proxy boundaries must avoid duplicated domain validation.
+- Functions (all):
+  - `byName` (L67-L67, arrow)
+  - `file` (L72-L72, function)
+  - `slug` (L87-L87, function)
+  - `direct` (L96-L96, function)
+  - `userName` (L100-L100, function)
+  - `loadUser` (L109-L109, function)
+  - `ensureWorkspace` (L115-L115, function)
+  - `postRoute` (L175-L175, function)
+  - `findPost` (L182-L182, function)
+  - `cleanupPost` (L188-L188, function)
+  - `attachMissingFiles` (L197-L197, function)
+  - `ensurePost` (L223-L223, function)
+  - `savePreference` (L255-L255, function)
+  - `ensureGettingStartedOnboarding` (L285-L285, function)
+- Exports:
+  - `ensureGettingStartedOnboarding` (L285)
+- Key snippets and use-case mapping:
+  - `L67-L67`: Implements `byName` for this module use case.
+  - `L72-L72`: Implements `file` for this module use case.
+  - `L87-L87`: Implements `slug` for this module use case.
+  - `L96-L96`: Implements `direct` for this module use case.
+  - `L100-L100`: Implements `userName` for this module use case.
+  - `L109-L109`: Implements `loadUser` for this module use case.
+  - `L115-L115`: Implements `ensureWorkspace` for this module use case.
+  - `L175-L175`: Implements `postRoute` for this module use case.
+  - `L182-L182`: Implements `findPost` for this module use case.
+  - `L188-L188`: Implements `cleanupPost` for this module use case.
+  - `L197-L197`: Implements `attachMissingFiles` for this module use case.
+  - `L223-L223`: Implements `ensurePost` for this module use case.
+  - `L255-L255`: Implements `savePreference` for this module use case.
+  - `L285-L285`: Implements `ensureGettingStartedOnboarding` for this module use case.
+### `workflow-node-reference.generated.ts`
+- Purpose: Defines module behavior owned by this usage folder.
+- Owning use cases: Runtime and application flows that import this file through package boundaries.
+- Input shape: Typed arguments and imported contracts declared in this file signatures.
+- Output shape: Typed return values, thrown errors, and exported contracts declared in this file.
+- Role interaction rules:
+  - `User`: Allowed through explicit service/resolver authorization and scoped data access only.
+  - `Root User`: Can execute elevated flows where caller context resolves root privileges.
+  - `Super Admin`: Can execute organization-level privileged flows where membership and role gates pass.
+- Logic gates summary:
+  - Authorization and scope checks must run before read/write side effects.
+  - Entity/ORM boundaries must remain the source of persisted data access.
+  - MCP or GraphQL proxy boundaries must avoid duplicated domain validation.
+- Functions (all):
+  - None detected by static scan.
+- Exports:
+  - None
+- Key snippets and use-case mapping:
+  - `L1-L2461`: File-level constants/types behavior.
+
+## Non-Negotiable Coding Standards
+
+- Never ever write supabase.from we have entities always load data through it
+- Do not use `supabase.from` or `input.from` directly. Load data through entities and the ORM.
+- Do not add autofills
+- Do not add placeholder, do not add normalisation.
+- Find and fix the root cause instead of adding the fallback.
+- Do not add fallbacks. Fix the logic.
+- Everything should be typed dont use unknown, never, any
+- Do not use JS-style safe/coercion helper functions.
+- Do not use `to*` functions like `toPayload`.
+- Do not create map functions.
+- Do not check types like `type === Array` or `type === string`.
+- Use the `||` operator for comparison.
+- Do not write a code file bigger than 70-100 lines.
+- Try to generalise multiple lines of code into fewer lines.
+- After writing code, recheck patterns across the workspace to remove duplications.
+- Do not invent functionality. Ask the user if it already exists somewhere.
+- Prefer the smallest correct change over broad refactors.
+- Preserve the repo's existing style, structure, and package manager.
+- Avoid destructive git commands unless explicitly requested.
+- Keep memory entries concise, factual, and tied to the files or behavior that changed.
+- Entity table name should come from the Entity and not direct usage.
+- Function naming should be .create, .delete .find .update .find .findBy .deleteBy
+- Disallowed naming conventions are createRows, listRows and any programatic name for the entity.
+- Importing supabase in the entities is disallowed. Upgrade the ORM file is something is not supported by entity. Orm is present at @gigav2/orm
+- If Create, Update, Delete, Find is unable to do any thing stop the coding and inform the user of your updates first.
+- Do not create proxy or additional functions for create, update, delete
+- Keep ORM generic do not add Entity functions in the ORM
+- MCP.ts will execute inner graphql for the operations they will not implement any
+- JSON is disallowed in the Graphql Schema use proper types only
+- Dont use zod for typing

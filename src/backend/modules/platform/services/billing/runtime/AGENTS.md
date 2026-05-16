@@ -1,0 +1,240 @@
+# AGENTS.md
+
+## Directory Context
+
+- Path: `packages/apps/general/src/services/billing/runtime`
+- This folder owns the production code files in this folder.
+
+## Contract
+
+- Keep all code in this folder aligned with its layer package boundary.
+- If any production code file in this folder is updated, update this AGENTS.md in the same change.
+- This AGENTS file must document each owned file purpose, input/output shape, role rules, logic gates, functions, exports, and line snippets.
+
+## File Usage Specification
+
+### `guard.ts`
+- Purpose: Defines module behavior owned by this usage folder.
+- Owning use cases: Runtime and application flows that import this file through package boundaries.
+- Input shape: Typed arguments and imported contracts declared in this file signatures.
+- Output shape: Typed return values, thrown errors, and exported contracts declared in this file.
+- Role interaction rules:
+  - `User`: Allowed through explicit service/resolver authorization and scoped data access only.
+  - `Root User`: Can execute elevated flows where caller context resolves root privileges.
+  - `Super Admin`: Can execute organization-level privileged flows where membership and role gates pass.
+- Logic gates summary:
+  - Authorization and scope checks must run before read/write side effects.
+  - Entity/ORM boundaries must remain the source of persisted data access.
+  - MCP or GraphQL proxy boundaries must avoid duplicated domain validation.
+- Functions (all):
+  - `assertBillingExecutionAccess` (L4-L4, function)
+- Exports:
+  - `assertBillingExecutionAccess` (L4)
+- Key snippets and use-case mapping:
+  - `L4-L4`: Implements `assertBillingExecutionAccess` for this module use case.
+### `metadata.ts`
+- Purpose: Defines module behavior owned by this usage folder.
+- Owning use cases: Runtime and application flows that import this file through package boundaries.
+- Input shape: Typed arguments and imported contracts declared in this file signatures.
+- Output shape: Typed return values, thrown errors, and exported contracts declared in this file.
+- Role interaction rules:
+  - `User`: Allowed through explicit service/resolver authorization and scoped data access only.
+  - `Root User`: Can execute elevated flows where caller context resolves root privileges.
+  - `Super Admin`: Can execute organization-level privileged flows where membership and role gates pass.
+- Logic gates summary:
+  - Authorization and scope checks must run before read/write side effects.
+  - Entity/ORM boundaries must remain the source of persisted data access.
+  - MCP or GraphQL proxy boundaries must avoid duplicated domain validation.
+- Functions (all):
+  - `readRecord` (L5-L5, function)
+  - `readOrganizationBillingMeta` (L13-L13, function)
+  - `mergeOrganizationBillingMeta` (L27-L27, function)
+  - `readMemberBillingMeta` (L39-L39, function)
+  - `mergeMemberBillingMeta` (L49-L49, function)
+  - `buildSeatRank` (L61-L61, function)
+- Exports:
+  - `readOrganizationBillingMeta` (L13)
+  - `mergeOrganizationBillingMeta` (L27)
+  - `readMemberBillingMeta` (L39)
+  - `mergeMemberBillingMeta` (L49)
+  - `buildSeatRank` (L61)
+- Key snippets and use-case mapping:
+  - `L5-L5`: Implements `readRecord` for this module use case.
+  - `L13-L13`: Implements `readOrganizationBillingMeta` for this module use case.
+  - `L27-L27`: Implements `mergeOrganizationBillingMeta` for this module use case.
+  - `L39-L39`: Implements `readMemberBillingMeta` for this module use case.
+  - `L49-L49`: Implements `mergeMemberBillingMeta` for this module use case.
+  - `L61-L61`: Implements `buildSeatRank` for this module use case.
+### `plans.ts`
+- Purpose: Defines module behavior owned by this usage folder.
+- Owning use cases: Runtime and application flows that import this file through package boundaries.
+- Input shape: Typed arguments and imported contracts declared in this file signatures.
+- Output shape: Typed return values, thrown errors, and exported contracts declared in this file.
+- Role interaction rules:
+  - `User`: Allowed through explicit service/resolver authorization and scoped data access only.
+  - `Root User`: Can execute elevated flows where caller context resolves root privileges.
+  - `Super Admin`: Can execute organization-level privileged flows where membership and role gates pass.
+- Logic gates summary:
+  - Authorization and scope checks must run before read/write side effects.
+  - Entity/ORM boundaries must remain the source of persisted data access.
+  - MCP or GraphQL proxy boundaries must avoid duplicated domain validation.
+- Functions (all):
+  - `readBillingPlan` (L80-L80, function)
+  - `isUserBillingPlan` (L99-L99, function)
+  - `isOrganizationBillingPlan` (L103-L103, function)
+- Exports:
+  - `readBillingPlan` (L80)
+  - `isUserBillingPlan` (L99)
+  - `isOrganizationBillingPlan` (L103)
+- Key snippets and use-case mapping:
+  - `L80-L80`: Implements `readBillingPlan` for this module use case.
+  - `L99-L99`: Implements `isUserBillingPlan` for this module use case.
+  - `L103-L103`: Implements `isOrganizationBillingPlan` for this module use case.
+### `service.ts`
+- Purpose: Defines module behavior owned by this usage folder.
+- Owning use cases: Runtime and application flows that import this file through package boundaries.
+- Input shape: Typed arguments and imported contracts declared in this file signatures.
+- Output shape: Typed return values, thrown errors, and exported contracts declared in this file.
+- Role interaction rules:
+  - `User`: Allowed through explicit service/resolver authorization and scoped data access only.
+  - `Root User`: Can execute elevated flows where caller context resolves root privileges.
+  - `Super Admin`: Can execute organization-level privileged flows where membership and role gates pass.
+- Logic gates summary:
+  - Authorization and scope checks must run before read/write side effects.
+  - Entity/ORM boundaries must remain the source of persisted data access.
+  - MCP or GraphQL proxy boundaries must avoid duplicated domain validation.
+- Functions (all):
+  - `readIsoDate` (L82-L82, function)
+  - `readPaymentSource` (L87-L87, function)
+  - `readStoredPaymentSource` (L94-L94, function)
+  - `readStoredSubscription` (L105-L105, function)
+  - `readStoredBillingAccess` (L117-L117, function)
+  - `readOriginUrl` (L140-L140, function)
+  - `readSubscriptionPlanId` (L148-L148, function)
+  - `readSubscriptionPeriodEnd` (L152-L152, function)
+  - `readTrialUsed` (L161-L161, function)
+  - `readActiveSubscription` (L165-L165, function)
+  - `readPaidSubscription` (L174-L174, function)
+  - `readUser` (L183-L183, function)
+  - `readUserBillingSource` (L189-L189, function)
+  - `readMemberships` (L200-L200, function)
+  - `readOrganization` (L204-L204, function)
+  - `saveSubscriptions` (L210-L210, function)
+  - `readCustomerSubscriptions` (L236-L236, function)
+  - `enforceBusinessLiteSeats` (L242-L242, function)
+  - `syncUserBilling` (L287-L287, function)
+  - `syncBillingForUserId` (L345-L345, function)
+  - `syncOrganizationBilling` (L349-L349, function)
+  - `readBillingAccessState` (L497-L497, function)
+  - `createBillingCheckoutSession` (L542-L542, function)
+  - `finalizeOrganizationSignup` (L667-L667, function)
+- Exports:
+  - `readUserBillingSource` (L189)
+  - `syncBillingForUserId` (L345)
+  - `readBillingAccessState` (L497)
+  - `createBillingCheckoutSession` (L542)
+  - `finalizeOrganizationSignup` (L667)
+- Key snippets and use-case mapping:
+  - `L82-L82`: Implements `readIsoDate` for this module use case.
+  - `L87-L87`: Implements `readPaymentSource` for this module use case.
+  - `L94-L94`: Implements `readStoredPaymentSource` for this module use case.
+  - `L105-L105`: Implements `readStoredSubscription` for this module use case.
+  - `L117-L117`: Implements `readStoredBillingAccess` for this module use case.
+  - `L140-L140`: Implements `readOriginUrl` for this module use case.
+  - `L148-L148`: Implements `readSubscriptionPlanId` for this module use case.
+  - `L152-L152`: Implements `readSubscriptionPeriodEnd` for this module use case.
+  - `L161-L161`: Implements `readTrialUsed` for this module use case.
+  - `L165-L165`: Implements `readActiveSubscription` for this module use case.
+  - `L174-L174`: Implements `readPaidSubscription` for this module use case.
+  - `L183-L183`: Implements `readUser` for this module use case.
+  - `L189-L189`: Implements `readUserBillingSource` for this module use case.
+  - `L200-L200`: Implements `readMemberships` for this module use case.
+  - `L204-L204`: Implements `readOrganization` for this module use case.
+  - `L210-L210`: Implements `saveSubscriptions` for this module use case.
+  - `L236-L236`: Implements `readCustomerSubscriptions` for this module use case.
+  - `L242-L242`: Implements `enforceBusinessLiteSeats` for this module use case.
+  - `L287-L287`: Implements `syncUserBilling` for this module use case.
+  - `L345-L345`: Implements `syncBillingForUserId` for this module use case.
+  - `L349-L349`: Implements `syncOrganizationBilling` for this module use case.
+  - `L497-L497`: Implements `readBillingAccessState` for this module use case.
+  - `L542-L542`: Implements `createBillingCheckoutSession` for this module use case.
+  - `L667-L667`: Implements `finalizeOrganizationSignup` for this module use case.
+### `subscription-status.ts`
+- Purpose: Defines module behavior owned by this usage folder.
+- Owning use cases: Runtime and application flows that import this file through package boundaries.
+- Input shape: Typed arguments and imported contracts declared in this file signatures.
+- Output shape: Typed return values, thrown errors, and exported contracts declared in this file.
+- Role interaction rules:
+  - `User`: Allowed through explicit service/resolver authorization and scoped data access only.
+  - `Root User`: Can execute elevated flows where caller context resolves root privileges.
+  - `Super Admin`: Can execute organization-level privileged flows where membership and role gates pass.
+- Logic gates summary:
+  - Authorization and scope checks must run before read/write side effects.
+  - Entity/ORM boundaries must remain the source of persisted data access.
+  - MCP or GraphQL proxy boundaries must avoid duplicated domain validation.
+- Functions (all):
+  - `subscriptionIsActive` (L1-L1, function)
+  - `subscriptionIsPaid` (L5-L5, function)
+  - `readStoredSubscriptionStatus` (L9-L9, function)
+- Exports:
+  - `subscriptionIsActive` (L1)
+  - `subscriptionIsPaid` (L5)
+  - `readStoredSubscriptionStatus` (L9)
+- Key snippets and use-case mapping:
+  - `L1-L1`: Implements `subscriptionIsActive` for this module use case.
+  - `L5-L5`: Implements `subscriptionIsPaid` for this module use case.
+  - `L9-L9`: Implements `readStoredSubscriptionStatus` for this module use case.
+### `trial-days.ts`
+- Purpose: Defines module behavior owned by this usage folder.
+- Owning use cases: Runtime and application flows that import this file through package boundaries.
+- Input shape: Typed arguments and imported contracts declared in this file signatures.
+- Output shape: Typed return values, thrown errors, and exported contracts declared in this file.
+- Role interaction rules:
+  - `User`: Allowed through explicit service/resolver authorization and scoped data access only.
+  - `Root User`: Can execute elevated flows where caller context resolves root privileges.
+  - `Super Admin`: Can execute organization-level privileged flows where membership and role gates pass.
+- Logic gates summary:
+  - Authorization and scope checks must run before read/write side effects.
+  - Entity/ORM boundaries must remain the source of persisted data access.
+  - MCP or GraphQL proxy boundaries must avoid duplicated domain validation.
+- Functions (all):
+  - `sharedAppPlan` (L4-L4, function)
+  - `readBillingCheckoutTrialDays` (L8-L8, function)
+- Exports:
+  - `readBillingCheckoutTrialDays` (L8)
+- Key snippets and use-case mapping:
+  - `L4-L4`: Implements `sharedAppPlan` for this module use case.
+  - `L8-L8`: Implements `readBillingCheckoutTrialDays` for this module use case.
+
+## Non-Negotiable Coding Standards
+
+- Never ever write supabase.from we have entities always load data through it
+- Do not use `supabase.from` or `input.from` directly. Load data through entities and the ORM.
+- Do not add autofills
+- Do not add placeholder, do not add normalisation.
+- Find and fix the root cause instead of adding the fallback.
+- Do not add fallbacks. Fix the logic.
+- Everything should be typed dont use unknown, never, any
+- Do not use JS-style safe/coercion helper functions.
+- Do not use `to*` functions like `toPayload`.
+- Do not create map functions.
+- Do not check types like `type === Array` or `type === string`.
+- Use the `||` operator for comparison.
+- Do not write a code file bigger than 70-100 lines.
+- Try to generalise multiple lines of code into fewer lines.
+- After writing code, recheck patterns across the workspace to remove duplications.
+- Do not invent functionality. Ask the user if it already exists somewhere.
+- Prefer the smallest correct change over broad refactors.
+- Preserve the repo's existing style, structure, and package manager.
+- Avoid destructive git commands unless explicitly requested.
+- Keep memory entries concise, factual, and tied to the files or behavior that changed.
+- Entity table name should come from the Entity and not direct usage.
+- Function naming should be .create, .delete .find .update .find .findBy .deleteBy
+- Disallowed naming conventions are createRows, listRows and any programatic name for the entity.
+- Importing supabase in the entities is disallowed. Upgrade the ORM file is something is not supported by entity. Orm is present at @gigav2/orm
+- If Create, Update, Delete, Find is unable to do any thing stop the coding and inform the user of your updates first.
+- Do not create proxy or additional functions for create, update, delete
+- Keep ORM generic do not add Entity functions in the ORM
+- MCP.ts will execute inner graphql for the operations they will not implement any
+- JSON is disallowed in the Graphql Schema use proper types only
+- Dont use zod for typing

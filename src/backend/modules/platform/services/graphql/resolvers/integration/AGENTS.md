@@ -1,0 +1,685 @@
+# AGENTS.md
+
+## Directory Context
+
+- Path: `packages/apps/general/src/services/graphql/resolvers/integration`
+- This folder owns the production code files in this folder.
+
+## Contract
+
+- Keep all code in this folder aligned with its layer package boundary.
+- If any production code file in this folder is updated, update this AGENTS.md in the same change.
+- This AGENTS file must document each owned file purpose, input/output shape, role rules, logic gates, functions, exports, and line snippets.
+- Chat ingestion contract update: `chat.resolver.ts` queues ingestion in background, returns job handles immediately, and relies on runtime monitor + socket ingestion streams for progress/logs.
+
+## File Usage Specification
+
+### `base.ts`
+- Purpose: Defines module behavior owned by this usage folder.
+- Owning use cases: Runtime and application flows that import this file through package boundaries.
+- Input shape: Typed arguments and imported contracts declared in this file signatures.
+- Output shape: Typed return values, thrown errors, and exported contracts declared in this file.
+- Role interaction rules:
+  - `User`: Allowed through explicit service/resolver authorization and scoped data access only.
+  - `Root User`: Can execute elevated flows where caller context resolves root privileges.
+  - `Super Admin`: Can execute organization-level privileged flows where membership and role gates pass.
+- Logic gates summary:
+  - Authorization and scope checks must run before read/write side effects.
+  - Entity/ORM boundaries must remain the source of persisted data access.
+  - MCP or GraphQL proxy boundaries must avoid duplicated domain validation.
+  - Resolver ownership remains in `@giga/general`, while runtime/tool execution is sourced from `@giga/mcp`.
+- Functions (all):
+  - `resolveUser` (L11-L11, arrow)
+  - `getCurrentUserOrganizationContext` (L22-L22, arrow)
+  - `canOrganizationAction` (L32-L32, arrow)
+  - `requireOrganizationManagerRole` (L35-L35, arrow)
+  - `isBooleanInput` (L49-L49, function)
+  - `getSupportedPermissionAction` (L53-L53, function)
+  - `buildWorkflowMenuOptionsForUser` (L62-L62, function)
+  - `scopeTypeToTargetType` (L103-L103, function)
+  - `requireWorkflowScopeType` (L111-L111, function)
+  - `isRestrictedScope` (L119-L119, function)
+  - `resourceTypeToOrganizationModule` (L137-L137, function)
+  - `createWorkflowSecret` (L170-L170, function)
+  - `buildWorkflowSearchText` (L174-L174, function)
+  - `push` (L176-L176, arrow)
+  - `requireRootUser` (L209-L209, function)
+  - `getResolverAuthContext` (L215-L215, function)
+  - `assertWorkflowScopeAssignmentAllowed` (L232-L232, function)
+  - `GraphqlCustomResolverModule` (L297-L297, class)
+  - `getService` (L300-L300, method)
+- Exports:
+  - `getCurrentUserOrganizationContext` (L22)
+  - `canOrganizationAction` (L32)
+  - `requireOrganizationManagerRole` (L35)
+  - `isBooleanInput` (L49)
+  - `getSupportedPermissionAction` (L53)
+  - `buildWorkflowMenuOptionsForUser` (L62)
+  - `scopeTypeToTargetType` (L103)
+  - `requireWorkflowScopeType` (L111)
+  - `isRestrictedScope` (L119)
+  - `resourceTypeToOrganizationModule` (L137)
+  - `createWorkflowSecret` (L170)
+  - `buildWorkflowSearchText` (L174)
+  - `requireRootUser` (L209)
+  - `getResolverAuthContext` (L215)
+  - `assertWorkflowScopeAssignmentAllowed` (L232)
+  - `GraphqlCustomResolverModule` (L297)
+- Key snippets and use-case mapping:
+  - `L11-L11`: Implements `resolveUser` for this module use case.
+  - `L22-L22`: Implements `getCurrentUserOrganizationContext` for this module use case.
+  - `L32-L32`: Implements `canOrganizationAction` for this module use case.
+  - `L35-L35`: Implements `requireOrganizationManagerRole` for this module use case.
+  - `L49-L49`: Implements `isBooleanInput` for this module use case.
+  - `L53-L53`: Implements `getSupportedPermissionAction` for this module use case.
+  - `L62-L62`: Implements `buildWorkflowMenuOptionsForUser` for this module use case.
+  - `L103-L103`: Implements `scopeTypeToTargetType` for this module use case.
+  - `L111-L111`: Implements `requireWorkflowScopeType` for this module use case.
+  - `L119-L119`: Implements `isRestrictedScope` for this module use case.
+  - `L137-L137`: Implements `resourceTypeToOrganizationModule` for this module use case.
+  - `L170-L170`: Implements `createWorkflowSecret` for this module use case.
+  - `L174-L174`: Implements `buildWorkflowSearchText` for this module use case.
+  - `L176-L176`: Implements `push` for this module use case.
+  - `L209-L209`: Implements `requireRootUser` for this module use case.
+  - `L215-L215`: Implements `getResolverAuthContext` for this module use case.
+  - `L232-L232`: Implements `assertWorkflowScopeAssignmentAllowed` for this module use case.
+  - `L297-L297`: Implements `GraphqlCustomResolverModule` for this module use case.
+  - `L300-L300`: Implements `getService` for this module use case.
+### `billing.resolver.ts`
+- Purpose: Defines module behavior owned by this usage folder.
+- Owning use cases: Runtime and application flows that import this file through package boundaries.
+- Input shape: Typed arguments and imported contracts declared in this file signatures.
+- Output shape: Typed return values, thrown errors, and exported contracts declared in this file.
+- Role interaction rules:
+  - `User`: Allowed through explicit service/resolver authorization and scoped data access only.
+  - `Root User`: Can execute elevated flows where caller context resolves root privileges.
+  - `Super Admin`: Can execute organization-level privileged flows where membership and role gates pass.
+- Logic gates summary:
+  - Authorization and scope checks must run before read/write side effects.
+  - Entity/ORM boundaries must remain the source of persisted data access.
+  - MCP or GraphQL proxy boundaries must avoid duplicated domain validation.
+- Functions (all):
+  - `BillingResolver` (L10-L10, class)
+  - `billingAccessState` (L12-L12, method)
+- Exports:
+  - `BillingResolver` (L10)
+- Key snippets and use-case mapping:
+  - `L10-L10`: Implements `BillingResolver` for this module use case.
+  - `L12-L12`: Implements `billingAccessState` for this module use case.
+### `bookmark.resolver.ts`
+- Purpose: Defines module behavior owned by this usage folder.
+- Owning use cases: Runtime and application flows that import this file through package boundaries.
+- Input shape: Typed arguments and imported contracts declared in this file signatures.
+- Output shape: Typed return values, thrown errors, and exported contracts declared in this file.
+- Role interaction rules:
+  - `User`: Allowed through explicit service/resolver authorization and scoped data access only.
+  - `Root User`: Can execute elevated flows where caller context resolves root privileges.
+  - `Super Admin`: Can execute organization-level privileged flows where membership and role gates pass.
+- Logic gates summary:
+  - Authorization and scope checks must run before read/write side effects.
+  - Entity/ORM boundaries must remain the source of persisted data access.
+  - MCP or GraphQL proxy boundaries must avoid duplicated domain validation.
+- Functions (all):
+  - `requiredText` (L28-L28, arrow)
+  - `assertTargetShape` (L34-L34, arrow)
+  - `BookmarkResolver` (L55-L55, class)
+  - `bookmarks` (L57-L57, method)
+  - `createBookmark` (L68-L68, method)
+  - `deleteBookmark` (L90-L90, method)
+- Exports:
+  - `BookmarkResolver` (L55)
+- Key snippets and use-case mapping:
+  - `L28-L28`: Implements `requiredText` for this module use case.
+  - `L34-L34`: Implements `assertTargetShape` for this module use case.
+  - `L55-L55`: Implements `BookmarkResolver` for this module use case.
+  - `L57-L57`: Implements `bookmarks` for this module use case.
+  - `L68-L68`: Implements `createBookmark` for this module use case.
+  - `L90-L90`: Implements `deleteBookmark` for this module use case.
+### `category.resolver.ts`
+- Purpose: Defines module behavior owned by this usage folder.
+- Owning use cases: Runtime and application flows that import this file through package boundaries.
+- Input shape: Typed arguments and imported contracts declared in this file signatures.
+- Output shape: Typed return values, thrown errors, and exported contracts declared in this file.
+- Role interaction rules:
+  - `User`: Allowed through explicit service/resolver authorization and scoped data access only.
+  - `Root User`: Can execute elevated flows where caller context resolves root privileges.
+  - `Super Admin`: Can execute organization-level privileged flows where membership and role gates pass.
+- Logic gates summary:
+  - Authorization and scope checks must run before read/write side effects.
+  - Entity/ORM boundaries must remain the source of persisted data access.
+  - MCP or GraphQL proxy boundaries must avoid duplicated domain validation.
+- Functions (all):
+  - `CategoryResolver` (L13-L13, class)
+  - `aiUpdateCategory` (L15-L15, method)
+  - `aiCreateCategory` (L32-L32, method)
+  - `deleteAiCategory` (L51-L51, method)
+- Exports:
+  - `CategoryResolver` (L13)
+- Key snippets and use-case mapping:
+  - `L13-L13`: Implements `CategoryResolver` for this module use case.
+  - `L15-L15`: Implements `aiUpdateCategory` for this module use case.
+  - `L32-L32`: Implements `aiCreateCategory` for this module use case.
+  - `L51-L51`: Implements `deleteAiCategory` for this module use case.
+### `channel.resolver.ts`
+- Purpose: Defines module behavior owned by this usage folder.
+- Owning use cases: Runtime and application flows that import this file through package boundaries.
+- Input shape: Typed arguments and imported contracts declared in this file signatures.
+- Output shape: Typed return values, thrown errors, and exported contracts declared in this file.
+- Role interaction rules:
+  - `User`: Allowed through explicit service/resolver authorization and scoped data access only.
+  - `Root User`: Can execute elevated flows where caller context resolves root privileges.
+  - `Super Admin`: Can execute organization-level privileged flows where membership and role gates pass.
+- Logic gates summary:
+  - Authorization and scope checks must run before read/write side effects.
+  - Entity/ORM boundaries must remain the source of persisted data access.
+  - MCP or GraphQL proxy boundaries must avoid duplicated domain validation.
+- Functions (all):
+  - `ChannelResolver` (L22-L22, class)
+  - `gigaFetchUserTree` (L24-L24, method)
+  - `aiUpdateChannel` (L41-L41, method)
+  - `aiMoveChannel` (L58-L58, method)
+  - `aiLinkChannel` (L84-L84, method)
+  - `aiLinkCategoryToChannels` (L116-L116, method)
+  - `gigaCreateChannel` (L136-L136, method)
+  - `gigaCreateGlobalChannel` (L150-L150, method)
+  - `deleteAiChannel` (L161-L161, method)
+- Exports:
+  - `ChannelResolver` (L22)
+- Key snippets and use-case mapping:
+  - `L22-L22`: Implements `ChannelResolver` for this module use case.
+  - `L24-L24`: Implements `gigaFetchUserTree` for this module use case.
+  - `L41-L41`: Implements `aiUpdateChannel` for this module use case.
+  - `L58-L58`: Implements `aiMoveChannel` for this module use case.
+  - `L84-L84`: Implements `aiLinkChannel` for this module use case.
+  - `L116-L116`: Implements `aiLinkCategoryToChannels` for this module use case.
+  - `L136-L136`: Implements `gigaCreateChannel` for this module use case.
+  - `L150-L150`: Implements `gigaCreateGlobalChannel` for this module use case.
+  - `L161-L161`: Implements `deleteAiChannel` for this module use case.
+### `chat.resolver.ts`
+- Purpose: Defines module behavior owned by this usage folder.
+- Owning use cases: Runtime and application flows that import this file through package boundaries.
+- Input shape: Typed arguments and imported contracts declared in this file signatures.
+- Output shape: Typed return values, thrown errors, and exported contracts declared in this file.
+- Role interaction rules:
+  - `User`: Allowed through explicit service/resolver authorization and scoped data access only.
+  - `Root User`: Can execute elevated flows where caller context resolves root privileges.
+  - `Super Admin`: Can execute organization-level privileged flows where membership and role gates pass.
+- Logic gates summary:
+  - Authorization and scope checks must run before read/write side effects.
+  - Entity/ORM boundaries must remain the source of persisted data access.
+  - MCP or GraphQL proxy boundaries must avoid duplicated domain validation.
+- Functions (all):
+  - `readScopedSession` (L46-L46, function)
+  - `readChatScope` (L57-L57, function)
+  - `readChatSharePayload` (L66-L66, function)
+  - `ChatResolver` (L84-L84, class)
+  - `chatConfirm` (L215-L215, method)
+  - `getOrCreateChat` (L228-L228, method)
+  - `chatSession` (L282-L282, method)
+  - `chatSessions` (L323-L323, method)
+  - `chatMessages` (L371-L371, method)
+  - `chatShareByChatId` (L387-L387, method)
+  - `chatShareByToken` (L394-L394, method)
+  - `chatSharePublish` (L400-L400, method)
+  - `chatShareRevoke` (L407-L407, method)
+  - `agentIngestPost` (L473-L473, method)
+  - `aiFetchUserTree` (L516-L516, method)
+  - `gigaCheckSlugAvailability` (L566-L566, method)
+- Exports:
+  - `ChatResolver` (L84)
+- Key snippets and use-case mapping:
+  - `L46-L46`: Implements `readScopedSession` for this module use case.
+  - `L57-L57`: Implements `readChatScope` for this module use case.
+  - `L66-L66`: Implements `readChatSharePayload` for this module use case.
+  - `L84-L84`: Implements `ChatResolver` for this module use case.
+  - `L215-L215`: Implements `chatConfirm` for this module use case.
+  - `L228-L228`: Implements `getOrCreateChat` for this module use case.
+  - `L282-L282`: Implements `chatSession` for this module use case.
+  - `L323-L323`: Implements `chatSessions` for this module use case.
+  - `L371-L371`: Implements `chatMessages` for this module use case.
+  - `L387-L387`: Implements `chatShareByChatId` for this module use case.
+  - `L394-L394`: Implements `chatShareByToken` for this module use case.
+  - `L400-L400`: Implements `chatSharePublish` for this module use case.
+  - `L407-L407`: Implements `chatShareRevoke` for this module use case.
+  - `L473-L473`: Implements `agentIngestPost` for this module use case.
+  - `L516-L516`: Implements `aiFetchUserTree` for this module use case.
+  - `L566-L566`: Implements `gigaCheckSlugAvailability` for this module use case.
+### `credential.resolver.ts`
+- Purpose: Defines module behavior owned by this usage folder.
+- Owning use cases: Runtime and application flows that import this file through package boundaries.
+- Input shape: Typed arguments and imported contracts declared in this file signatures.
+- Output shape: Typed return values, thrown errors, and exported contracts declared in this file.
+- Role interaction rules:
+  - `User`: Allowed through explicit service/resolver authorization and scoped data access only.
+  - `Root User`: Can execute elevated flows where caller context resolves root privileges.
+  - `Super Admin`: Can execute organization-level privileged flows where membership and role gates pass.
+- Logic gates summary:
+  - Authorization and scope checks must run before read/write side effects.
+  - Entity/ORM boundaries must remain the source of persisted data access.
+  - MCP or GraphQL proxy boundaries must avoid duplicated domain validation.
+- Functions (all):
+  - `resolveCredentialResolverAccess` (L20-L20, function)
+  - `CredentialResolver` (L32-L32, class)
+  - `credentialCatalog` (L34-L34, method)
+  - `credentials` (L45-L45, method)
+  - `credential` (L61-L61, method)
+  - `createCredential` (L78-L78, method)
+  - `updateCredential` (L87-L87, method)
+  - `deleteCredential` (L98-L98, method)
+  - `activateCredential` (L109-L109, method)
+- Exports:
+  - `CredentialResolver` (L32)
+- Key snippets and use-case mapping:
+  - `L20-L20`: Implements `resolveCredentialResolverAccess` for this module use case.
+  - `L32-L32`: Implements `CredentialResolver` for this module use case.
+  - `L34-L34`: Implements `credentialCatalog` for this module use case.
+  - `L45-L45`: Implements `credentials` for this module use case.
+  - `L61-L61`: Implements `credential` for this module use case.
+  - `L78-L78`: Implements `createCredential` for this module use case.
+  - `L87-L87`: Implements `updateCredential` for this module use case.
+  - `L98-L98`: Implements `deleteCredential` for this module use case.
+  - `L109-L109`: Implements `activateCredential` for this module use case.
+### `mcp.resolver.ts`
+- Purpose: Defines module behavior owned by this usage folder.
+- Owning use cases: Runtime and application flows that import this file through package boundaries.
+- Input shape: Typed arguments and imported contracts declared in this file signatures.
+- Output shape: Typed return values, thrown errors, and exported contracts declared in this file.
+- Role interaction rules:
+  - `User`: Allowed through explicit service/resolver authorization and scoped data access only.
+  - `Root User`: Can execute elevated flows where caller context resolves root privileges.
+  - `Super Admin`: Can execute organization-level privileged flows where membership and role gates pass.
+- Logic gates summary:
+  - Authorization and scope checks must run before read/write side effects.
+  - Entity/ORM boundaries must remain the source of persisted data access.
+  - MCP or GraphQL proxy boundaries must avoid duplicated domain validation.
+- Functions (all):
+  - `McpResolver` (L10-L10, class)
+  - `mcpTools` (L12-L12, method)
+- Exports:
+  - `McpResolver` (L10)
+- Key snippets and use-case mapping:
+  - `L10-L10`: Implements `McpResolver` for this module use case.
+  - `L12-L12`: Implements `mcpTools` for this module use case.
+### `onboarding.resolver.ts`
+- Purpose: Defines module behavior owned by this usage folder.
+- Owning use cases: Runtime and application flows that import this file through package boundaries.
+- Input shape: Typed arguments and imported contracts declared in this file signatures.
+- Output shape: Typed return values, thrown errors, and exported contracts declared in this file.
+- Role interaction rules:
+  - `User`: Allowed through explicit service/resolver authorization and scoped data access only.
+  - `Root User`: Can execute elevated flows where caller context resolves root privileges.
+  - `Super Admin`: Can execute organization-level privileged flows where membership and role gates pass.
+- Logic gates summary:
+  - Authorization and scope checks must run before read/write side effects.
+  - Entity/ORM boundaries must remain the source of persisted data access.
+  - MCP or GraphQL proxy boundaries must avoid duplicated domain validation.
+- Functions (all):
+  - `OnboardingResolver` (L8-L8, class)
+- Exports:
+  - `OnboardingResolver` (L8)
+- Key snippets and use-case mapping:
+  - `L8-L8`: Implements `OnboardingResolver` for this module use case.
+### `org.resolver.ts`
+- Purpose: Defines module behavior owned by this usage folder.
+- Owning use cases: Runtime and application flows that import this file through package boundaries.
+- Input shape: Typed arguments and imported contracts declared in this file signatures.
+- Output shape: Typed return values, thrown errors, and exported contracts declared in this file.
+- Role interaction rules:
+  - `User`: Allowed through explicit service/resolver authorization and scoped data access only.
+  - `Root User`: Can execute elevated flows where caller context resolves root privileges.
+  - `Super Admin`: Can execute organization-level privileged flows where membership and role gates pass.
+- Logic gates summary:
+  - Authorization and scope checks must run before read/write side effects.
+  - Entity/ORM boundaries must remain the source of persisted data access.
+  - MCP or GraphQL proxy boundaries must avoid duplicated domain validation.
+- Functions (all):
+  - `formatAIPermission` (L52-L52, arrow)
+  - `invalidateSettingsGraphqlCache` (L65-L65, arrow)
+  - `readRootIdentityData` (L75-L75, arrow)
+  - `readOrganizationMembersData` (L93-L93, arrow)
+  - `readOrganizationMemberCandidatesData` (L119-L119, arrow)
+  - `readOrganizationNodeRestrictionsData` (L121-L121, arrow)
+  - `readOrganizationContentRestrictionsData` (L139-L139, arrow)
+  - `mapOrganizationRow` (L190-L190, arrow)
+  - `createOrganizationData` (L203-L203, arrow)
+  - `updateOrganizationData` (L214-L214, arrow)
+  - `deleteOrganizationData` (L228-L228, arrow)
+  - `addOrganizationMemberData` (L236-L236, arrow)
+  - `updateOrganizationMemberRoleData` (L256-L256, arrow)
+  - `disableOrganizationMemberData` (L275-L275, arrow)
+  - `removeOrganizationMemberData` (L294-L294, arrow)
+  - `addOrganizationNodeRestrictionData` (L299-L299, arrow)
+  - `removeOrganizationNodeRestrictionData` (L322-L322, arrow)
+  - `addOrganizationContentRestrictionData` (L336-L336, arrow)
+  - `removeOrganizationContentRestrictionData` (L359-L359, arrow)
+  - `readUserByIdData` (L396-L396, arrow)
+  - `readUserByUsernameData` (L397-L397, arrow)
+  - `readUserByEmailData` (L399-L399, arrow)
+  - `deleteUserData` (L400-L400, arrow)
+  - `activeOrganizationIdsForUser` (L402-L402, arrow)
+  - `canReadUserRecord` (L416-L416, arrow)
+  - `assertCanReadUserRecord` (L428-L428, arrow)
+  - `OrgResolver` (L434-L434, class)
+  - `rootIdentity` (L436-L436, method)
+  - `organizations` (L450-L450, method)
+  - `organizationMembers` (L484-L484, method)
+  - `aiPermissions` (L506-L506, method)
+  - `workflowContextMenuOptions` (L572-L572, method)
+  - `createOrganization` (L578-L578, method)
+  - `updateOrganization` (L586-L586, method)
+  - `deleteOrganization` (L594-L594, method)
+  - `addOrganizationMember` (L602-L602, method)
+  - `updateOrganizationMemberRole` (L611-L611, method)
+  - `disableOrganizationMember` (L620-L620, method)
+  - `removeOrganizationMember` (L629-L629, method)
+  - `upsertAIPermission` (L638-L638, method)
+  - `deleteAIPermission` (L668-L668, method)
+  - `addOrganizationNodeRestriction` (L687-L687, method)
+  - `removeOrganizationNodeRestriction` (L696-L696, method)
+  - `addOrganizationContentRestriction` (L705-L705, method)
+  - `removeOrganizationContentRestriction` (L714-L714, method)
+  - `users` (L723-L723, method)
+  - `userById` (L730-L730, method)
+  - `userByUsername` (L739-L739, method)
+  - `userByEmail` (L748-L748, method)
+  - `deleteUser` (L757-L757, method)
+- Exports:
+  - `OrgResolver` (L434)
+- Key snippets and use-case mapping:
+  - `L52-L52`: Implements `formatAIPermission` for this module use case.
+  - `L65-L65`: Implements `invalidateSettingsGraphqlCache` for this module use case.
+  - `L75-L75`: Implements `readRootIdentityData` for this module use case.
+  - `L93-L93`: Implements `readOrganizationMembersData` for this module use case.
+  - `L119-L119`: Implements `readOrganizationMemberCandidatesData` for this module use case.
+  - `L121-L121`: Implements `readOrganizationNodeRestrictionsData` for this module use case.
+  - `L139-L139`: Implements `readOrganizationContentRestrictionsData` for this module use case.
+  - `L190-L190`: Implements `mapOrganizationRow` for this module use case.
+  - `L203-L203`: Implements `createOrganizationData` for this module use case.
+  - `L214-L214`: Implements `updateOrganizationData` for this module use case.
+  - `L228-L228`: Implements `deleteOrganizationData` for this module use case.
+  - `L236-L236`: Implements `addOrganizationMemberData` for this module use case.
+  - `L256-L256`: Implements `updateOrganizationMemberRoleData` for this module use case.
+  - `L275-L275`: Implements `disableOrganizationMemberData` for this module use case.
+  - `L294-L294`: Implements `removeOrganizationMemberData` for this module use case.
+  - `L299-L299`: Implements `addOrganizationNodeRestrictionData` for this module use case.
+  - `L322-L322`: Implements `removeOrganizationNodeRestrictionData` for this module use case.
+  - `L336-L336`: Implements `addOrganizationContentRestrictionData` for this module use case.
+  - `L359-L359`: Implements `removeOrganizationContentRestrictionData` for this module use case.
+  - `L396-L396`: Implements `readUserByIdData` for this module use case.
+  - `L397-L397`: Implements `readUserByUsernameData` for this module use case.
+  - `L399-L399`: Implements `readUserByEmailData` for this module use case.
+  - `L400-L400`: Implements `deleteUserData` for this module use case.
+  - `L402-L402`: Implements `activeOrganizationIdsForUser` for this module use case.
+  - `L416-L416`: Implements `canReadUserRecord` for this module use case.
+  - `L428-L428`: Implements `assertCanReadUserRecord` for this module use case.
+  - `L434-L434`: Implements `OrgResolver` for this module use case.
+  - `L436-L436`: Implements `rootIdentity` for this module use case.
+  - `L450-L450`: Implements `organizations` for this module use case.
+  - `L484-L484`: Implements `organizationMembers` for this module use case.
+  - `L506-L506`: Implements `aiPermissions` for this module use case.
+  - `L572-L572`: Implements `workflowContextMenuOptions` for this module use case.
+  - `L578-L578`: Implements `createOrganization` for this module use case.
+  - `L586-L586`: Implements `updateOrganization` for this module use case.
+  - `L594-L594`: Implements `deleteOrganization` for this module use case.
+  - `L602-L602`: Implements `addOrganizationMember` for this module use case.
+  - `L611-L611`: Implements `updateOrganizationMemberRole` for this module use case.
+  - `L620-L620`: Implements `disableOrganizationMember` for this module use case.
+  - `L629-L629`: Implements `removeOrganizationMember` for this module use case.
+  - `L638-L638`: Implements `upsertAIPermission` for this module use case.
+  - `L668-L668`: Implements `deleteAIPermission` for this module use case.
+  - `L687-L687`: Implements `addOrganizationNodeRestriction` for this module use case.
+  - `L696-L696`: Implements `removeOrganizationNodeRestriction` for this module use case.
+  - `L705-L705`: Implements `addOrganizationContentRestriction` for this module use case.
+  - `L714-L714`: Implements `removeOrganizationContentRestriction` for this module use case.
+  - `L723-L723`: Implements `users` for this module use case.
+  - `L730-L730`: Implements `userById` for this module use case.
+  - `L739-L739`: Implements `userByUsername` for this module use case.
+  - `L748-L748`: Implements `userByEmail` for this module use case.
+  - `L757-L757`: Implements `deleteUser` for this module use case.
+### `plan-policy.resolver.ts`
+- Purpose: Defines module behavior owned by this usage folder.
+- Owning use cases: Runtime and application flows that import this file through package boundaries.
+- Input shape: Typed arguments and imported contracts declared in this file signatures.
+- Output shape: Typed return values, thrown errors, and exported contracts declared in this file.
+- Role interaction rules:
+  - `User`: Allowed through explicit service/resolver authorization and scoped data access only.
+  - `Root User`: Can execute elevated flows where caller context resolves root privileges.
+  - `Super Admin`: Can execute organization-level privileged flows where membership and role gates pass.
+- Logic gates summary:
+  - Authorization and scope checks must run before read/write side effects.
+  - Entity/ORM boundaries must remain the source of persisted data access.
+  - MCP or GraphQL proxy boundaries must avoid duplicated domain validation.
+- Functions (all):
+  - `PlanPolicyResolver` (L85-L85, class)
+  - `effectiveAIPolicy` (L87-L87, method)
+  - `rootPlanPolicyConfig` (L112-L112, method)
+- Exports:
+  - `PlanPolicyResolver` (L85)
+- Key snippets and use-case mapping:
+  - `L85-L85`: Implements `PlanPolicyResolver` for this module use case.
+  - `L87-L87`: Implements `effectiveAIPolicy` for this module use case.
+  - `L112-L112`: Implements `rootPlanPolicyConfig` for this module use case.
+### `post.resolver.ts`
+- Purpose: Defines module behavior owned by this usage folder.
+- Owning use cases: Runtime and application flows that import this file through package boundaries.
+- Input shape: Typed arguments and imported contracts declared in this file signatures.
+- Output shape: Typed return values, thrown errors, and exported contracts declared in this file.
+- Role interaction rules:
+  - `User`: Allowed through explicit service/resolver authorization and scoped data access only.
+  - `Root User`: Can execute elevated flows where caller context resolves root privileges.
+  - `Super Admin`: Can execute organization-level privileged flows where membership and role gates pass.
+- Logic gates summary:
+  - Authorization and scope checks must run before read/write side effects.
+  - Entity/ORM boundaries must remain the source of persisted data access.
+  - MCP or GraphQL proxy boundaries must avoid duplicated domain validation.
+- Functions (all):
+  - `PostResolver` (L19-L19, class)
+  - `deleteAiPost` (L75-L75, method)
+- Exports:
+  - `PostResolver` (L19)
+- Key snippets and use-case mapping:
+  - `L19-L19`: Implements `PostResolver` for this module use case.
+  - `L75-L75`: Implements `deleteAiPost` for this module use case.
+### `shared-space.resolver.ts`
+- Purpose: Defines module behavior owned by this usage folder.
+- Owning use cases: Runtime and application flows that import this file through package boundaries.
+- Input shape: Typed arguments and imported contracts declared in this file signatures.
+- Output shape: Typed return values, thrown errors, and exported contracts declared in this file.
+- Role interaction rules:
+  - `User`: Allowed through explicit service/resolver authorization and scoped data access only.
+  - `Root User`: Can execute elevated flows where caller context resolves root privileges.
+  - `Super Admin`: Can execute organization-level privileged flows where membership and role gates pass.
+- Logic gates summary:
+  - Authorization and scope checks must run before read/write side effects.
+  - Entity/ORM boundaries must remain the source of persisted data access.
+  - MCP or GraphQL proxy boundaries must avoid duplicated domain validation.
+- Functions (all):
+  - `org` (L17-L17, arrow)
+  - `SharedSpaceResolver` (L20-L20, class)
+  - `organizationSharedSpace` (L22-L22, method)
+  - `organizationSharedSpaceFiles` (L27-L27, method)
+  - `organizationSharedSpaceStat` (L32-L32, method)
+  - `organizationSharedSpaceCreateFolder` (L37-L37, method)
+  - `organizationSharedSpaceWriteFile` (L42-L42, method)
+  - `organizationSharedSpaceDownloadUrl` (L51-L51, method)
+  - `organizationSharedSpaceMove` (L60-L60, method)
+  - `organizationSharedSpaceCopy` (L68-L68, method)
+  - `organizationSharedSpaceDelete` (L76-L76, method)
+- Exports:
+  - `SharedSpaceResolver` (L20)
+- Key snippets and use-case mapping:
+  - `L17-L17`: Implements `org` for this module use case.
+  - `L20-L20`: Implements `SharedSpaceResolver` for this module use case.
+  - `L22-L22`: Implements `organizationSharedSpace` for this module use case.
+  - `L27-L27`: Implements `organizationSharedSpaceFiles` for this module use case.
+  - `L32-L32`: Implements `organizationSharedSpaceStat` for this module use case.
+  - `L37-L37`: Implements `organizationSharedSpaceCreateFolder` for this module use case.
+  - `L42-L42`: Implements `organizationSharedSpaceWriteFile` for this module use case.
+  - `L51-L51`: Implements `organizationSharedSpaceDownloadUrl` for this module use case.
+  - `L60-L60`: Implements `organizationSharedSpaceMove` for this module use case.
+  - `L68-L68`: Implements `organizationSharedSpaceCopy` for this module use case.
+  - `L76-L76`: Implements `organizationSharedSpaceDelete` for this module use case.
+### `subject.resolver.ts`
+- Purpose: Defines module behavior owned by this usage folder.
+- Owning use cases: Runtime and application flows that import this file through package boundaries.
+- Input shape: Typed arguments and imported contracts declared in this file signatures.
+- Output shape: Typed return values, thrown errors, and exported contracts declared in this file.
+- Role interaction rules:
+  - `User`: Allowed through explicit service/resolver authorization and scoped data access only.
+  - `Root User`: Can execute elevated flows where caller context resolves root privileges.
+  - `Super Admin`: Can execute organization-level privileged flows where membership and role gates pass.
+- Logic gates summary:
+  - Authorization and scope checks must run before read/write side effects.
+  - Entity/ORM boundaries must remain the source of persisted data access.
+  - MCP or GraphQL proxy boundaries must avoid duplicated domain validation.
+- Functions (all):
+  - `SubjectResolver` (L27-L27, class)
+  - `resolveSubjects` (L79-L79, method)
+  - `deleteAiSubject` (L95-L95, method)
+  - `aiAttachSubjectToGraph` (L112-L112, method)
+  - `aiAttachUserPermissions` (L156-L156, method)
+  - `aiLinkSubjectToCategory` (L177-L177, method)
+- Exports:
+  - `SubjectResolver` (L27)
+- Key snippets and use-case mapping:
+  - `L27-L27`: Implements `SubjectResolver` for this module use case.
+  - `L79-L79`: Implements `resolveSubjects` for this module use case.
+  - `L95-L95`: Implements `deleteAiSubject` for this module use case.
+  - `L112-L112`: Implements `aiAttachSubjectToGraph` for this module use case.
+  - `L156-L156`: Implements `aiAttachUserPermissions` for this module use case.
+  - `L177-L177`: Implements `aiLinkSubjectToCategory` for this module use case.
+### `workflow.resolver.ts`
+- Purpose: Defines module behavior owned by this usage folder.
+- Owning use cases: Runtime and application flows that import this file through package boundaries.
+- Input shape: Typed arguments and imported contracts declared in this file signatures.
+- Output shape: Typed return values, thrown errors, and exported contracts declared in this file.
+- Role interaction rules:
+  - `User`: Allowed through explicit service/resolver authorization and scoped data access only.
+  - `Root User`: Can execute elevated flows where caller context resolves root privileges.
+  - `Super Admin`: Can execute organization-level privileged flows where membership and role gates pass.
+- Logic gates summary:
+  - Authorization and scope checks must run before read/write side effects.
+  - Entity/ORM boundaries must remain the source of persisted data access.
+  - MCP or GraphQL proxy boundaries must avoid duplicated domain validation.
+- Functions (all):
+  - `invalidateWorkflowGraphqlCache` (L73-L73, arrow)
+  - `workflowCatalogString` (L84-L84, arrow)
+  - `enforceKeys` (L91-L91, arrow)
+  - `normalizeFilterText` (L124-L124, function)
+  - `hasEqFilter` (L130-L130, function)
+  - `hasInFilter` (L134-L134, function)
+  - `getEqFilterValue` (L138-L138, function)
+  - `getInFilterValues` (L145-L145, function)
+  - `getNullFilterValue` (L155-L155, function)
+  - `applyNullableFilter` (L164-L164, function)
+  - `normalizeNullableId` (L178-L178, function)
+  - `applyWorkflowAssignmentCollectionFilter` (L182-L182, function)
+  - `matchesWorkflowAssignmentFilterValue` (L192-L192, function)
+  - `filterWorkflowAssignmentRows` (L208-L208, function)
+  - `readWorkflowOrganizationId` (L220-L220, function)
+  - `WorkflowResolver` (L227-L227, class)
+  - `workflowCatalogRecords` (L229-L229, method)
+  - `workflowRecord` (L269-L269, method)
+  - `aiWorkflowsCollection` (L279-L279, method)
+  - `aiWorkflowExecutionsCollection` (L321-L321, method)
+  - `aiWorkflowVersionsCollection` (L367-L367, method)
+  - `workflowExecutionOptions` (L419-L419, method)
+  - `aiWorkflowAssignmentsCollection` (L470-L470, method)
+  - `insertIntoAiWorkflowsCollection` (L505-L505, method)
+  - `updateAiWorkflowsCollection` (L541-L541, method)
+  - `insertIntoAiWorkflowAssignmentsCollection` (L560-L560, method)
+  - `updateAiWorkflowAssignmentsCollection` (L581-L581, method)
+  - `deleteFromAiWorkflowAssignmentsCollection` (L598-L598, method)
+  - `workflowVersions` (L635-L635, method)
+  - `workflowRunningStatuses` (L652-L652, method)
+  - `workflowUserNodes` (L675-L675, method)
+  - `workflowUserNode` (L689-L689, method)
+  - `workflowDeleteVersions` (L696-L696, method)
+  - `workflowCreateUserNode` (L709-L709, method)
+  - `workflowUpdateUserNode` (L715-L715, method)
+  - `workflowDeleteUserNode` (L722-L722, method)
+  - `workflowValidateUserNode` (L730-L730, method)
+  - `workflowValidateNodePackage` (L749-L749, method)
+  - `workflowImportNodePackage` (L759-L759, method)
+  - `workflowExportNodePackage` (L765-L765, method)
+  - `withAI` (L772-L772, method)
+  - `workflowExecute` (L802-L802, method)
+- Exports:
+  - `applyWorkflowAssignmentCollectionFilter` (L182)
+  - `WorkflowResolver` (L227)
+- Key snippets and use-case mapping:
+  - `L73-L73`: Implements `invalidateWorkflowGraphqlCache` for this module use case.
+  - `L84-L84`: Implements `workflowCatalogString` for this module use case.
+  - `L91-L91`: Implements `enforceKeys` for this module use case.
+  - `L124-L124`: Implements `normalizeFilterText` for this module use case.
+  - `L130-L130`: Implements `hasEqFilter` for this module use case.
+  - `L134-L134`: Implements `hasInFilter` for this module use case.
+  - `L138-L138`: Implements `getEqFilterValue` for this module use case.
+  - `L145-L145`: Implements `getInFilterValues` for this module use case.
+  - `L155-L155`: Implements `getNullFilterValue` for this module use case.
+  - `L164-L164`: Implements `applyNullableFilter` for this module use case.
+  - `L178-L178`: Implements `normalizeNullableId` for this module use case.
+  - `L182-L182`: Implements `applyWorkflowAssignmentCollectionFilter` for this module use case.
+  - `L192-L192`: Implements `matchesWorkflowAssignmentFilterValue` for this module use case.
+  - `L208-L208`: Implements `filterWorkflowAssignmentRows` for this module use case.
+  - `L220-L220`: Implements `readWorkflowOrganizationId` for this module use case.
+  - `L227-L227`: Implements `WorkflowResolver` for this module use case.
+  - `L229-L229`: Implements `workflowCatalogRecords` for this module use case.
+  - `L269-L269`: Implements `workflowRecord` for this module use case.
+  - `L279-L279`: Implements `aiWorkflowsCollection` for this module use case.
+  - `L321-L321`: Implements `aiWorkflowExecutionsCollection` for this module use case.
+  - `L367-L367`: Implements `aiWorkflowVersionsCollection` for this module use case.
+  - `L419-L419`: Implements `workflowExecutionOptions` for this module use case.
+  - `L470-L470`: Implements `aiWorkflowAssignmentsCollection` for this module use case.
+  - `L505-L505`: Implements `insertIntoAiWorkflowsCollection` for this module use case.
+  - `L541-L541`: Implements `updateAiWorkflowsCollection` for this module use case.
+  - `L560-L560`: Implements `insertIntoAiWorkflowAssignmentsCollection` for this module use case.
+  - `L581-L581`: Implements `updateAiWorkflowAssignmentsCollection` for this module use case.
+  - `L598-L598`: Implements `deleteFromAiWorkflowAssignmentsCollection` for this module use case.
+  - `L635-L635`: Implements `workflowVersions` for this module use case.
+  - `L652-L652`: Implements `workflowRunningStatuses` for this module use case.
+  - `L675-L675`: Implements `workflowUserNodes` for this module use case.
+  - `L689-L689`: Implements `workflowUserNode` for this module use case.
+  - `L696-L696`: Implements `workflowDeleteVersions` for this module use case.
+  - `L709-L709`: Implements `workflowCreateUserNode` for this module use case.
+  - `L715-L715`: Implements `workflowUpdateUserNode` for this module use case.
+  - `L722-L722`: Implements `workflowDeleteUserNode` for this module use case.
+  - `L730-L730`: Implements `workflowValidateUserNode` for this module use case.
+  - `L749-L749`: Implements `workflowValidateNodePackage` for this module use case.
+  - `L759-L759`: Implements `workflowImportNodePackage` for this module use case.
+  - `L765-L765`: Implements `workflowExportNodePackage` for this module use case.
+  - `L772-L772`: Implements `withAI` for this module use case.
+  - `L802-L802`: Implements `workflowExecute` for this module use case.
+
+## Non-Negotiable Coding Standards
+
+- Never ever write supabase.from we have entities always load data through it
+- Do not use `supabase.from` or `input.from` directly. Load data through entities and the ORM.
+- Do not add autofills
+- Do not add placeholder, do not add normalisation.
+- Find and fix the root cause instead of adding the fallback.
+- Do not add fallbacks. Fix the logic.
+- Everything should be typed dont use unknown, never, any
+- Do not use JS-style safe/coercion helper functions.
+- Do not use `to*` functions like `toPayload`.
+- Do not create map functions.
+- Do not check types like `type === Array` or `type === string`.
+- Use the `||` operator for comparison.
+- Do not write a code file bigger than 70-100 lines.
+- Try to generalise multiple lines of code into fewer lines.
+- After writing code, recheck patterns across the workspace to remove duplications.
+- Do not invent functionality. Ask the user if it already exists somewhere.
+- Prefer the smallest correct change over broad refactors.
+- Preserve the repo's existing style, structure, and package manager.
+- Avoid destructive git commands unless explicitly requested.
+- Keep memory entries concise, factual, and tied to the files or behavior that changed.
+- Entity table name should come from the Entity and not direct usage.
+- Function naming should be .create, .delete .find .update .find .findBy .deleteBy
+- Disallowed naming conventions are createRows, listRows and any programatic name for the entity.
+- Importing supabase in the entities is disallowed. Upgrade the ORM file is something is not supported by entity. Orm is present at @gigav2/orm
+- If Create, Update, Delete, Find is unable to do any thing stop the coding and inform the user of your updates first.
+- Do not create proxy or additional functions for create, update, delete
+- Keep ORM generic do not add Entity functions in the ORM
+- MCP.ts will execute inner graphql for the operations they will not implement any
+- JSON is disallowed in the Graphql Schema use proper types only
+- Dont use zod for typing

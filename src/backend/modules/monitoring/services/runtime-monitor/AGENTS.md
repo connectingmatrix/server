@@ -1,0 +1,227 @@
+# AGENTS.md
+
+## Directory Context
+
+- Path: `packages/apps/process-monitoring/src/services/runtime-monitor`
+- This folder owns the production code files in this folder.
+
+## Contract
+
+- Keep all code in this folder aligned with its layer package boundary.
+- If any production code file in this folder is updated, update this AGENTS.md in the same change.
+- This AGENTS file must document each owned file purpose, input/output shape, role rules, logic gates, functions, exports, and line snippets.
+
+## File Usage Specification
+
+### `index.ts`
+- Purpose: Defines module behavior owned by this usage folder.
+- Owning use cases: Runtime and application flows that import this file through package boundaries.
+- Input shape: Typed arguments and imported contracts declared in this file signatures.
+- Output shape: Typed return values, thrown errors, and exported contracts declared in this file.
+- Role interaction rules:
+  - `User`: Allowed through explicit service/resolver authorization and scoped data access only.
+  - `Root User`: Can execute elevated flows where caller context resolves root privileges.
+  - `Super Admin`: Can execute organization-level privileged flows where membership and role gates pass.
+- Logic gates summary:
+  - Authorization and scope checks must run before read/write side effects.
+  - Entity/ORM boundaries must remain the source of persisted data access.
+  - MCP or GraphQL proxy boundaries must avoid duplicated domain validation.
+- Functions (all):
+  - None detected by static scan.
+- Exports:
+  - `* (re-export)` (L1)
+  - `* (re-export)` (L2)
+  - `* (re-export)` (L3)
+- Key snippets and use-case mapping:
+  - `L1-L4`: File-level constants/types behavior.
+### `runtime-monitor.scope.ts`
+- Purpose: Defines module behavior owned by this usage folder.
+- Owning use cases: Runtime and application flows that import this file through package boundaries.
+- Input shape: Typed arguments and imported contracts declared in this file signatures.
+- Output shape: Typed return values, thrown errors, and exported contracts declared in this file.
+- Role interaction rules:
+  - `User`: Allowed through explicit service/resolver authorization and scoped data access only.
+  - `Root User`: Can execute elevated flows where caller context resolves root privileges.
+  - `Super Admin`: Can execute organization-level privileged flows where membership and role gates pass.
+- Logic gates summary:
+  - Authorization and scope checks must run before read/write side effects.
+  - Entity/ORM boundaries must remain the source of persisted data access.
+  - MCP or GraphQL proxy boundaries must avoid duplicated domain validation.
+- Functions (all):
+  - `readText` (L8-L8, arrow)
+  - `isAdminRole` (L9-L9, arrow)
+  - `readOrganizationScope` (L16-L16, function)
+  - `resolveRuntimeMonitorScope` (L25-L25, function)
+- Exports:
+  - `resolveRuntimeMonitorScope` (L25)
+- Key snippets and use-case mapping:
+  - `L8-L8`: Implements `readText` for this module use case.
+  - `L9-L9`: Implements `isAdminRole` for this module use case.
+  - `L16-L16`: Implements `readOrganizationScope` for this module use case.
+  - `L25-L25`: Implements `resolveRuntimeMonitorScope` for this module use case.
+### `runtime-monitor.service.ts`
+- Purpose: Defines module behavior owned by this usage folder.
+- Owning use cases: Runtime and application flows that import this file through package boundaries.
+- Input shape: Typed arguments and imported contracts declared in this file signatures.
+- Output shape: Typed return values, thrown errors, and exported contracts declared in this file.
+- Role interaction rules:
+  - `User`: Allowed through explicit service/resolver authorization and scoped data access only.
+  - `Root User`: Can execute elevated flows where caller context resolves root privileges.
+  - `Super Admin`: Can execute organization-level privileged flows where membership and role gates pass.
+- Logic gates summary:
+  - Authorization and scope checks must run before read/write side effects.
+  - Entity/ORM boundaries must remain the source of persisted data access.
+  - MCP or GraphQL proxy boundaries must avoid duplicated domain validation.
+- Functions (all):
+  - `readText` (L33-L33, arrow)
+  - `readLower` (L34-L34, arrow)
+  - `readCount` (L35-L35, arrow)
+  - `isRunning` (L36-L36, arrow)
+  - `cpuByStatus` (L37-L37, arrow)
+  - `memoryByStatus` (L38-L38, arrow)
+  - `searchLine` (L66-L66, arrow)
+  - `readWorkflowRows` (L68-L68, function)
+  - `readAgentRows` (L107-L107, function)
+  - `readSwarmRows` (L131-L131, function)
+  - `readDeploymentRows` (L178-L178, function)
+  - `readRuntimeMonitor` (L207-L207, function)
+- Exports:
+  - `readRuntimeMonitor` (L207)
+- Key snippets and use-case mapping:
+  - `L33-L33`: Implements `readText` for this module use case.
+  - `L34-L34`: Implements `readLower` for this module use case.
+  - `L35-L35`: Implements `readCount` for this module use case.
+  - `L36-L36`: Implements `isRunning` for this module use case.
+  - `L37-L37`: Implements `cpuByStatus` for this module use case.
+  - `L38-L38`: Implements `memoryByStatus` for this module use case.
+  - `L66-L66`: Implements `searchLine` for this module use case.
+  - `L68-L68`: Implements `readWorkflowRows` for this module use case.
+  - `L107-L107`: Implements `readAgentRows` for this module use case.
+  - `L131-L131`: Implements `readSwarmRows` for this module use case.
+  - `L178-L178`: Implements `readDeploymentRows` for this module use case.
+  - `L207-L207`: Implements `readRuntimeMonitor` for this module use case.
+### `runtime-monitor.types.ts`
+- Purpose: Defines module behavior owned by this usage folder.
+- Owning use cases: Runtime and application flows that import this file through package boundaries.
+- Input shape: Typed arguments and imported contracts declared in this file signatures.
+- Output shape: Typed return values, thrown errors, and exported contracts declared in this file.
+- Role interaction rules:
+  - `User`: Allowed through explicit service/resolver authorization and scoped data access only.
+  - `Root User`: Can execute elevated flows where caller context resolves root privileges.
+  - `Super Admin`: Can execute organization-level privileged flows where membership and role gates pass.
+- Logic gates summary:
+  - Authorization and scope checks must run before read/write side effects.
+  - Entity/ORM boundaries must remain the source of persisted data access.
+  - MCP or GraphQL proxy boundaries must avoid duplicated domain validation.
+- Functions (all):
+  - None detected by static scan.
+- Exports:
+  - None
+- Key snippets and use-case mapping:
+  - `L1-L72`: File-level constants/types behavior.
+### `runtime-process-control.service.ts`
+- Purpose: Owns GraphQL-facing ingestion process control and ingestion-job read behavior with scope-aware access checks.
+- Owning use cases: Frontend process-monitor actions for ingestion status lookup and runtime stop/kill controls.
+- Input shape: `GraphqlResolverContext`, `ingestionJobId`, `processId`, and control mode (`stop` or `kill`).
+- Output shape: Typed ingestion job read payload (`job` + `logs`) and typed process-control ack payload for GraphQL mutations.
+- Role interaction rules:
+  - `User`: Can read/control only ingestion processes where `job.userId` is in personal scope.
+  - `Root User`: Can read/control any ingestion process in root-wide scope or requested scoped users.
+  - `Super Admin`: Can read/control org-scoped ingestion processes resolved by runtime monitor scope rules.
+- Logic gates summary:
+  - Resolve runtime monitor scope first; deny when caller scope does not include job owner.
+  - Process control only targets controllable ingestion runtime rows from registry.
+  - Stop/kill always returns typed ack fields consumed by GraphQL contracts.
+- Functions (all):
+  - `hasAccess` (L26-L30, arrow)
+  - `readIngestionJob` (L40-L46, function)
+  - `controlRuntimeProcess` (L48-L66, function)
+- Exports:
+  - `readIngestionJob` (L40)
+  - `controlRuntimeProcess` (L48)
+- Key snippets and use-case mapping:
+  - `L40-L46`: Enforces scope checks and returns ingestion job + log history.
+  - `L48-L66`: Applies stop/kill mode to controllable ingestion process ids and returns mutation ack payload.
+### `runtime-process.registry.ts`
+- Purpose: Maintains in-memory ingestion process lifecycle state, log history, cancellation signals, and runtime/socket emissions.
+- Owning use cases: Async ingestion orchestration, process monitor snapshots, runtime ingestion socket streaming, and stop/kill cancellation.
+- Input shape: Typed create/update/log/control payloads (`CreateIngestionProcessInput`, `UpdateIngestionProgressInput`, `AppendIngestionLogInput`).
+- Output shape: `IngestionJobSnapshot`, `IngestionLogEntry`, list snapshots, and abort signals for worker cancellation.
+- Role interaction rules:
+  - `User`: Observes registry state only through scoped monitor resolvers.
+  - `Root User`: Can monitor/control all records through root scope in resolver layer.
+  - `Super Admin`: Can monitor/control org records through resolver scope checks.
+- Logic gates summary:
+  - Stage transitions stop mutating once terminal states (`done|failed|cancelled`) are reached.
+  - Every progress/log write emits both structured ingestion socket events and runtime:event compatibility events.
+  - Cancellation aborts worker signal and marks terminal status for process-monitor APIs.
+- Functions (all):
+  - `readNumber` (L80-L83, arrow)
+  - `readPercent` (L84-L84, arrow)
+  - `readIso` (L85-L85, arrow)
+  - `statusByStage` (L87-L95, arrow)
+  - `isTerminal` (L97-L97, arrow)
+  - `toLogLevel` (L98-L98, arrow)
+  - `toSnapshot` (L99-L102, arrow)
+  - `emitProgress` (L104-L133, arrow)
+  - `emitLog` (L135-L171, arrow)
+  - `getEntry` (L173-L177, arrow)
+  - `setStage` (L179-L191, arrow)
+  - `createIngestionProcess` (L193-L223, function)
+  - `markIngestionRunning` (L225-L228, function)
+  - `updateIngestionProgress` (L230-L233, function)
+  - `appendIngestionLog` (L235-L254, function)
+  - `cancelIngestionProcess` (L256-L264, function)
+  - `readIngestionJobById` (L266-L270, function)
+  - `readIngestionJobByProcessId` (L272-L276, function)
+  - `readIngestionJobLogs` (L278-L282, function)
+  - `listIngestionJobs` (L284-L288, function)
+  - `readIngestionAbortSignal` (L290-L292, function)
+- Exports:
+  - `createIngestionProcess` (L193)
+  - `markIngestionRunning` (L225)
+  - `updateIngestionProgress` (L230)
+  - `appendIngestionLog` (L235)
+  - `cancelIngestionProcess` (L256)
+  - `readIngestionJobById` (L266)
+  - `readIngestionJobByProcessId` (L272)
+  - `readIngestionJobLogs` (L278)
+  - `listIngestionJobs` (L284)
+  - `readIngestionAbortSignal` (L290)
+- Key snippets and use-case mapping:
+  - `L104-L133`: Emits deterministic structured ingestion progress and runtime:event compatibility payloads.
+  - `L235-L254`: Appends log entries and streams hybrid log events for frontend trace views.
+  - `L256-L264`: Executes process cancellation semantics with abort-signal propagation.
+
+## Non-Negotiable Coding Standards
+
+- Never ever write supabase.from we have entities always load data through it
+- Do not use `supabase.from` or `input.from` directly. Load data through entities and the ORM.
+- Do not add autofills
+- Do not add placeholder, do not add normalisation.
+- Find and fix the root cause instead of adding the fallback.
+- Do not add fallbacks. Fix the logic.
+- Everything should be typed dont use unknown, never, any
+- Do not use JS-style safe/coercion helper functions.
+- Do not use `to*` functions like `toPayload`.
+- Do not create map functions.
+- Do not check types like `type === Array` or `type === string`.
+- Use the `||` operator for comparison.
+- Do not write a code file bigger than 70-100 lines.
+- Try to generalise multiple lines of code into fewer lines.
+- After writing code, recheck patterns across the workspace to remove duplications.
+- Do not invent functionality. Ask the user if it already exists somewhere.
+- Prefer the smallest correct change over broad refactors.
+- Preserve the repo's existing style, structure, and package manager.
+- Avoid destructive git commands unless explicitly requested.
+- Keep memory entries concise, factual, and tied to the files or behavior that changed.
+- Entity table name should come from the Entity and not direct usage.
+- Function naming should be .create, .delete .find .update .find .findBy .deleteBy
+- Disallowed naming conventions are createRows, listRows and any programatic name for the entity.
+- Importing supabase in the entities is disallowed. Upgrade the ORM file is something is not supported by entity. Orm is present at @gigav2/orm
+- If Create, Update, Delete, Find is unable to do any thing stop the coding and inform the user of your updates first.
+- Do not create proxy or additional functions for create, update, delete
+- Keep ORM generic do not add Entity functions in the ORM
+- MCP.ts will execute inner graphql for the operations they will not implement any
+- JSON is disallowed in the Graphql Schema use proper types only
+- Dont use zod for typing

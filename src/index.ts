@@ -1,75 +1,111 @@
-import { nowIso, type GraphQLPackage, type PackageHealth, type PackageModule, type PackageRoute, type RequestContext } from './contracts.js';
+import { nowIso, type PackageHealth, type PackageModule, type RequestContext } from './contracts.js';
+import { createStubLauncher } from './launcher.js';
+import { PackageObservability } from './observability.js';
 
-export interface PackageSlashCommand {
-  command: string;
-  owner?: string;
-  description?: string;
-  handler: (args: string[], context: RequestContext, raw?: string) => Promise<unknown> | unknown;
-}
-export interface RegisteredPackage { module: PackageModule & { slashCommands?: PackageSlashCommand[] }; registeredAt: string; }
-export interface ServerAppLike {
-  get?: (path: string, handler: PackageRoute['handler']) => unknown;
-  post?: (path: string, handler: PackageRoute['handler']) => unknown;
-  put?: (path: string, handler: PackageRoute['handler']) => unknown;
-  patch?: (path: string, handler: PackageRoute['handler']) => unknown;
-  delete?: (path: string, handler: PackageRoute['handler']) => unknown;
-  use?: (...args: unknown[]) => unknown;
-}
-export interface SlashRegistrar { registerSlashCommand(command: string, handler: PackageSlashCommand['handler'], options?: { owner?: string; description?: string }): unknown; }
+export interface RuntimePackageModule extends PackageModule { runtime?: Record<string, unknown>; }
+const registered: RuntimePackageModule[] = [];
+let boundWorkflowExecutor: unknown;
+let boundWorkflowExecutorConfig: unknown;
+function getRuntime(module: RuntimePackageModule | undefined): Record<string, unknown> { return module?.runtime ?? {}; }
+function runtimeOf<T extends Record<string, unknown>>(modules: Map<string, RuntimePackageModule>, name: string): T { return getRuntime(modules.get(name)) as T; }
+function call(target: unknown, method: string, ...args: unknown[]): unknown { const fn = target && typeof target === 'object' ? (target as Record<string, unknown>)[method] : undefined; return typeof fn === 'function' ? fn.apply(target, args) : undefined; }
+function processMonitoringRuntime(modules: RuntimePackageModule[]) { const loggerRuntime = getRuntime(modules.find((m) => m.name === '@connectingmatrix/logger')) as { processMonitoring?: unknown; ProcessMonitor?: unknown; Logger?: unknown }; return loggerRuntime.processMonitoring ?? loggerRuntime.ProcessMonitor ?? loggerRuntime.Logger; }
 
-type ResolverMap = Record<string, Record<string, unknown>>;
+export function wirePackageRuntime(modules: RuntimePackageModule[]): RuntimePackageModule[] {
+  const byName = new Map(modules.map((m)=>[m.name,m]));
+  const loggerRuntime = runtimeOf<{ Logger?: unknown; ProcessMonitor?: unknown; processMonitoring?: unknown }>(byName, '@connectingmatrix/logger');
+  const socketRuntime = runtimeOf<{ Socket?: unknown }>(byName, '@connectingmatrix/sockets');
+  const logger = loggerRuntime.Logger;
+  const processMonitoring = loggerRuntime.processMonitoring ?? loggerRuntime.ProcessMonitor;
+  const socket = socketRuntime.Socket;
 
-function normalizeRootTypeDefs(typeDefs: string): string {
-  return typeDefs
-    .replace(/\btype\s+Query\b/g, 'extend type Query')
-    .replace(/\btype\s+Mutation\b/g, 'extend type Mutation')
-    .replace(/\btype\s+Subscription\b/g, 'extend type Subscription');
-}
+  if (socket) call(logger, 'bindSockets', socket);
+  if (logger) call(socket, 'bindLogger', logger);
+  if (socket) call(processMonitoring, 'bindSockets', socket);
 
-function mergeResolverMaps(bundles: GraphQLPackage[]): ResolverMap {
-  const merged: ResolverMap = {
-    Query: { packageRuntimeHealth: () => 'ok' },
-    Mutation: { packageRuntimeNoop: () => true },
-  };
-  for (const bundle of bundles) {
-    const resolverMap = bundle.resolvers as ResolverMap;
-    for (const [typeName, fields] of Object.entries(resolverMap)) {
-      merged[typeName] = { ...(merged[typeName] ?? {}), ...(fields ?? {}) };
+  for (const module of modules) {
+    const runtime = getRuntime(module);
+    const observability = runtime.observability as { bind?: (...args: unknown[])=>unknown; registerHealth?: (...args: unknown[])=>unknown } | undefined;
+    observability?.bind?.({ logger, sockets: socket });
+    observability?.registerHealth?.(module.health);
+    call(logger, 'registerPackage', module.name, module.health);
+    call(processMonitoring, 'recordPackageSnapshot', module.name, module.health);
+    for (const value of Object.values(runtime)) {
+      if (logger) call(value, 'bindLogger', logger);
+      if (socket) call(value, 'bindSockets', socket);
     }
   }
-  return merged;
+
+  const chat = runtimeOf<{ Chat?: unknown }>(byName, '@connectingmatrix/chat');
+  const workflows = runtimeOf<{ workflowSlashCommands?: unknown[]; Workflows?: unknown }>(byName, '@connectingmatrix/workflows');
+  const tree = runtimeOf<{ treeSlashCommands?: unknown[]; Tree?: unknown }>(byName, '@giga/tree');
+  const file = runtimeOf<{ File?: unknown }>(byName, '@connectingmatrix/file');
+  const drive = runtimeOf<{ Drive?: unknown }>(byName, '@giga/drive');
+  const projects = runtimeOf<{ Projects?: unknown }>(byName, '@connectingmatrix/projects');
+  const aiAgents = runtimeOf<{ AIAgents?: unknown }>(byName, '@connectingmatrix/ai-agents');
+  const advancedAgents = runtimeOf<{ AdvancedAIAgents?: unknown }>(byName, '@connectingmatrix/ai-agents-advanced');
+  const swarm = runtimeOf<{ AgentSwarm?: unknown }>(byName, '@connectingmatrix/agent-swarm');
+  const gigaAgents = runtimeOf<{ GigaAgents?: unknown }>(byName, '@connectingmatrix/giga-agents');
+  const nodes = runtimeOf<{ Nodes?: unknown }>(byName, '@connectingmatrix/nodes');
+
+  if (workflows.workflowSlashCommands) call(chat.Chat, 'registerSlashCommands', workflows.workflowSlashCommands);
+  if (tree.treeSlashCommands) call(chat.Chat, 'registerSlashCommands', tree.treeSlashCommands);
+  call(drive.Drive, 'useFileModule', file.File, 'memory');
+  call(chat.Chat, 'bindDrive', drive.Drive);
+  call(projects.Projects, 'useFileModule', file.File, 'memory');
+  call(projects.Projects, 'bindChat', chat.Chat);
+  call(projects.Projects, 'bindAdvancedAgents', advancedAgents.AdvancedAIAgents);
+  call(nodes.Nodes, 'useFileModule', file.File, 'memory');
+  call(nodes.Nodes, 'bindChat', chat.Chat);
+  call(workflows.Workflows, 'bindNodes', nodes.Nodes);
+  call(aiAgents.AIAgents, 'bindProcessMonitoring', processMonitoring);
+  call(aiAgents.AIAgents, 'bindProcessMonitor', processMonitoring);
+  call(advancedAgents.AdvancedAIAgents, 'bindProcessMonitoring', processMonitoring);
+  call(swarm.AgentSwarm, 'bindAgents', aiAgents.AIAgents);
+  call(swarm.AgentSwarm, 'bindSystems', { aiAgents: aiAgents.AIAgents, advancedAgents: advancedAgents.AdvancedAIAgents, gigaAgents: gigaAgents.GigaAgents });
+  call(swarm.AgentSwarm, 'bindProcessMonitoring', processMonitoring);
+  call(swarm.AgentSwarm, 'bindProcessMonitor', processMonitoring);
+  call(projects.Projects, 'bindProcessMonitoring', processMonitoring);
+  call(projects.Projects, 'bindProcessMonitor', processMonitoring);
+  call(nodes.Nodes, 'bindProcessMonitoring', processMonitoring);
+  call(nodes.Nodes, 'bindProcessMonitor', processMonitoring);
+  call(workflows.Workflows, 'bindProcessMonitoring', processMonitoring);
+  call(workflows.Workflows, 'bindProcessMonitor', processMonitoring);
+  call(gigaAgents.GigaAgents, 'bindProcessMonitoring', processMonitoring);
+  call(gigaAgents.GigaAgents, 'bindProcessMonitor', processMonitoring);
+  call(gigaAgents.GigaAgents, 'bindCoreAgents', aiAgents.AIAgents);
+  call(gigaAgents.GigaAgents, 'bindAdapters', { workflows: workflows.Workflows, tree: tree.Tree, nodes: nodes.Nodes, aiAgents: aiAgents.AIAgents, advancedAgents: advancedAgents.AdvancedAIAgents });
+  call(workflows.Workflows, 'bindGigaAgents', gigaAgents.GigaAgents);
+  call(workflows.Workflows, 'useWorkflowAIAgent', gigaAgents.GigaAgents);
+  if (boundWorkflowExecutor) {
+    call(workflows.Workflows, 'bindExecutorPubSub', boundWorkflowExecutor, boundWorkflowExecutorConfig);
+    call(processMonitoring, 'bindWorkflowExecutorPubsub', boundWorkflowExecutor, boundWorkflowExecutorConfig);
+  }
+  return modules;
 }
 
-class ConnectingMatrixServer {
-  private readonly modules: RegisteredPackage[] = [];
-  register(module: PackageModule & { slashCommands?: PackageSlashCommand[] }): this { if (!this.modules.find((m) => m.module.name === module.name)) this.modules.push({ module, registeredAt: nowIso() }); return this; }
-  registerAsMiddleware(app: ServerAppLike): this {
-    const methodMap: Record<PackageRoute['method'], keyof ServerAppLike> = { GET: 'get', POST: 'post', PUT: 'put', PATCH: 'patch', DELETE: 'delete' };
-    for (const { module } of this.modules) for (const route of module.routes ?? []) {
-      const method = methodMap[route.method];
-      const fn = app[method];
-      if (typeof fn === 'function') fn.call(app, route.path, route.handler);
-    }
-    return this;
-  }
-  registerSlashCommands(registrar: SlashRegistrar): this {
-    for (const command of this.slashCommands()) registrar.registerSlashCommand(command.command, command.handler, { owner: command.owner, description: command.description });
-    return this;
-  }
-  graphqlBundles(): GraphQLPackage[] { return this.modules.map((m) => m.module.graphql).filter(Boolean) as GraphQLPackage[]; }
-  slashCommands(): PackageSlashCommand[] { return this.modules.flatMap(({ module }) => module.slashCommands ?? []); }
-  mergedGraphQL() {
-    const bundles = this.graphqlBundles();
-    return {
-      typeDefs: [`type Query { packageRuntimeHealth: String } type Mutation { packageRuntimeNoop: Boolean } type Subscription { packageRuntimeEvents: String }`, ...bundles.map((g) => normalizeRootTypeDefs(g.typeDefs))].join('\n'),
-      resolvers: mergeResolverMaps(bundles),
-      migrations: this.modules.flatMap((m) => m.module.migrations ?? m.module.graphql?.migrations ?? []),
-      namespaces: bundles.map((bundle) => bundle.namespace),
-    };
-  }
-  async health(): Promise<PackageHealth> { const modules = await Promise.all(this.modules.map(async ({ module }) => ({ name: module.name, health: await module.health() }))); return { name: '@connectingmatrix/server', status: modules.every((m) => m.health.status === 'ok') ? 'ok' : 'degraded', checkedAt: nowIso(), details: { modules, slashCommands: this.slashCommands().map((cmd) => ({ command: cmd.command, owner: cmd.owner })) } }; }
-  mcpManifest() { return { generatedAt: nowIso(), packages: this.modules.map(({ module }) => ({ name: module.name, version: module.version, graphql: module.graphql?.namespace, healthRoute: module.routes?.find((route) => route.path.endsWith('/health'))?.path })), tools: this.modules.flatMap(({ module }) => (module.routes ?? []).map((route) => ({ name: `${module.name}:${route.method}:${route.path}`, package: module.name, method: route.method, path: route.path }))), slashCommands: this.slashCommands().map(({ command, owner, description }) => ({ command, owner, description })) }; }
-}
-export const Server = new ConnectingMatrixServer();
-export function createPackage(): PackageModule { return { name: '@connectingmatrix/server', version: '0.1.0', health: () => Server.health(), routes: [{ method: 'GET', path: '/server/health', handler: () => Server.health() }, { method: 'GET', path: '/server/mcp', handler: () => Server.mcpManifest() }] }; }
-export * from './contracts.js';
+export const Server = {
+  register(module: RuntimePackageModule) { registered.push(module); wirePackageRuntime(registered); return Server; },
+  registerMany(modules: RuntimePackageModule[]) { for (const m of modules) registered.push(m); wirePackageRuntime(registered); return Server; },
+  bindWorkflowExecutor(executor: unknown, config?: unknown) { boundWorkflowExecutor = executor; boundWorkflowExecutorConfig = config; wirePackageRuntime(registered); return Server; },
+  bindWorkflowExecutorPubsub(executor: unknown, config?: unknown) { return Server.bindWorkflowExecutor(executor, config); },
+  packages() { return [...registered]; },
+  graphqlManifest() { const typeDefs = registered.map((m)=>m.graphql?.typeDefs).filter(Boolean); const resolvers: Record<string, Record<string, unknown>> = {}; for (const m of registered) for (const [type, map] of Object.entries(m.graphql?.resolvers ?? {})) resolvers[type] = { ...(resolvers[type] ?? {}), ...(map as Record<string, unknown>) }; return { typeDefs, resolvers }; },
+  migrations() { return registered.flatMap((m)=>m.migrations ?? m.graphql?.migrations ?? []); },
+  async launchers(context: RequestContext = {}) { const panels=[]; for (const m of registered) if (m.launcher) panels.push(await m.launcher(context)); return panels; },
+  mcpManifest() { return { generatedAt: nowIso(), packages: registered.map((m)=>({ name:m.name, graphql:m.graphql?.namespace, routes:m.routes?.map((r)=>({method:r.method,path:r.path})), launcher:Boolean(m.launcher), migrations:m.migrations?.length ?? 0, runtime:Object.keys(m.runtime ?? {}) })) }; },
+  async processMonitor() { const loggerRuntime = getRuntime(registered.find((m)=>m.name==='@connectingmatrix/logger')) as { Logger?: { processMonitorSnapshot?: ()=>Promise<unknown> } }; return loggerRuntime.Logger?.processMonitorSnapshot ? loggerRuntime.Logger.processMonitorSnapshot() : { checkedAt: nowIso(), packages: await Promise.all(registered.map((m)=>m.health())) }; },
+  processMonitoring: {
+    list(filter?: unknown) { return call(processMonitoringRuntime(registered), 'list', filter) ?? []; },
+    live(handler?: (rows: unknown)=>unknown) { return call(processMonitoringRuntime(registered), 'live', handler) ?? []; },
+    queueStatus(filter?: unknown) { return call(processMonitoringRuntime(registered), 'queueStatus', filter) ?? []; },
+    runtimeSources() { return call(processMonitoringRuntime(registered), 'runtimeSources') ?? []; },
+    logs: { live(processId: string, handler?: (rows: unknown)=>unknown) { const monitor = processMonitoringRuntime(registered) as { logs?: { live?: (processId: string, handler?: (rows: unknown)=>unknown)=>unknown } }; return monitor?.logs?.live?.(processId, handler) ?? []; } },
+    abort(processId: string, reason?: string, context?: RequestContext) { return call(processMonitoringRuntime(registered), 'abort', processId, reason, context) ?? { processId, aborted: false, reason: 'process monitor not registered' }; },
+    kill(processId: string, reason?: string, context?: RequestContext) { return call(processMonitoringRuntime(registered), 'kill', processId, reason, context) ?? { processId, killed: false, reason: 'process monitor not registered' }; },
+  },
+  health(): PackageHealth { return { name: '@connectingmatrix/server', status: 'ok', checkedAt: nowIso(), details: { packages: registered.length, launchers: registered.filter((m)=>m.launcher).length, processMonitoring: Boolean(processMonitoringRuntime(registered)), workflowExecutorBound: Boolean(boundWorkflowExecutor), ...PackageObservability.healthDetails() } }; },
+  launcher: createStubLauncher
+};
+export function createPackage(): PackageModule { return { name: '@connectingmatrix/server', version: '0.4.0', health: () => Server.health(), launcher: createStubLauncher, runtime: { Server, observability: PackageObservability }, routes: [{ method: 'GET', path: '/server/health', handler: () => Server.health() }, { method: 'GET', path: '/server/mcp', handler: () => Server.mcpManifest() }, { method: 'GET', path: '/server/process-monitor', handler: () => Server.processMonitor() }, { method: 'GET', path: '/process-monitoring/list', handler: (request) => Server.processMonitoring.list((request as { query?: unknown }).query) }, { method: 'GET', path: '/process-monitoring/live', handler: () => Server.processMonitoring.live() }, { method: 'GET', path: '/process-monitoring/queue-status', handler: (request) => Server.processMonitoring.queueStatus((request as { query?: unknown }).query) }, { method: 'GET', path: '/process-monitoring/sources', handler: () => Server.processMonitoring.runtimeSources() }, { method: 'GET', path: '/process-monitoring/logs/live', handler: (request) => Server.processMonitoring.logs.live(String((request as { query?: { processId?: string } }).query?.processId ?? '')) }, { method: 'POST', path: '/process-monitoring/abort', handler: (request) => Server.processMonitoring.abort(String((request as { body?: { processId?: string; reason?: string } }).body?.processId ?? ''), (request as { body?: { reason?: string } }).body?.reason, (request as { context?: RequestContext }).context ?? {}) }, { method: 'POST', path: '/process-monitoring/kill', handler: (request) => Server.processMonitoring.kill(String((request as { body?: { processId?: string; reason?: string } }).body?.processId ?? ''), (request as { body?: { reason?: string } }).body?.reason, (request as { context?: RequestContext }).context ?? {}) }, { method: 'GET', path: '/server/launchers', handler: (request) => Server.launchers((request as { context?: RequestContext }).context ?? {}) }] }; }
+export * from './contracts.js'; export * from './package-structure.js'; export * from './observability.js'; export * from './launcher.js';

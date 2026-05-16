@@ -1,0 +1,55 @@
+scalar JSON
+
+type WorkflowRuntimeResult {
+  summary: String
+  data: JSON
+  effects: JSON
+  refetch: [String!]
+  topic: String
+  snapshot: JSON
+  subscription: JSON
+}
+
+input WorkflowRuntimeInput {
+  workflowId: ID
+  workflow_id: ID
+  executionId: ID
+  execution_id: ID
+  runId: ID
+  run_id: ID
+  operation: String
+  first: Int
+  offset: Int
+  organizationId: ID
+  organization_id: ID
+  userId: ID
+  user_id: ID
+  where: JSON
+  payload: JSON
+  confirmed: Boolean
+  prompt: String
+}
+
+type WorkflowLiveEvent {
+  type: String!
+  workflowId: ID
+  executionId: ID
+  runId: ID
+  payload: JSON
+  createdAt: String!
+}
+
+extend type Query {
+  workflowCatalog(input: WorkflowRuntimeInput): WorkflowRuntimeResult
+  workflowRunning(input: WorkflowRuntimeInput): WorkflowRuntimeResult
+  workflowLogs(input: WorkflowRuntimeInput): WorkflowRuntimeResult
+  workflowEvents(input: WorkflowRuntimeInput): WorkflowRuntimeResult
+}
+
+extend type Mutation {
+  executeWorkflowOperation(input: WorkflowRuntimeInput!): WorkflowRuntimeResult
+}
+
+extend type Subscription {
+  workflowLiveEvents(input: WorkflowRuntimeInput!): WorkflowLiveEvent!
+}

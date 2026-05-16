@@ -1,0 +1,44 @@
+{
+  "UserPermissions": {
+    "Channel": {
+      "OWNS": "Created when a user creates a channel they own. This represents ownership of the channel.",
+      "CAN_ACCESS": "Created when a channel is shared with a user for collaborative access without ownership.",
+      "SUBSCRIBED_TO": "Created when a global channel is linked into a user's tree as read-only access.",
+      "LINKS": "Canonical relation for user-created link placements without ownership transfer.",
+      "LINKS_CHANNEL": "Legacy channel link relation copied forward to LINKS."
+    },
+    "Category": {
+      "OWNS": "Created when a user creates a category they own.",
+      "CAN_ACCESS": "Created when category access is granted without ownership."
+    },
+    "SubjectRef": {
+      "OWNS": "Created when a user creates/attaches a subject they own.",
+      "CAN_ACCESS": "Created when subject access is granted without ownership."
+    },
+    "PermissionProfile": {
+      "USES_PERMISSION_PROFILE": "Created when a user permission node references a reusable permission profile."
+    }
+  },
+  "Channel": {
+    "Channel": {
+      "CONTAINS_CHANNEL": "Parent-child structural relation for channel hierarchy.",
+      "LINKS": "Canonical relation for non-owning channel linkage across trees.",
+      "LINKS_CHANNEL": "Legacy channel link relation copied forward to LINKS.",
+      "OWNS": "Optional ownership-path relation where a channel path explicitly owns another channel."
+    },
+    "Category": {
+      "CONTAINS_CATEGORY": "Structural relation for categories nested under a channel.",
+      "LINKS": "Canonical relation for attaching categories to channels without changing hierarchy.",
+      "LINKS_CATEGORY": "Legacy category link relation copied forward to LINKS."
+    }
+  },
+  "Category": {
+    "Category": {
+      "CONTAINS_CATEGORY": "Parent-child structural relation for nested categories."
+    },
+    "SubjectRef": {
+      "CONTAINS_SUBJECT": "Owned hierarchy relation that attaches subjects under a category.",
+      "LINKS": "Canonical relation for linking subjects into another category without deleting owned hierarchy."
+    }
+  }
+}

@@ -1,0 +1,62 @@
+type SlashHint {
+  command: String!
+  title: String!
+  description: String!
+  argsSchema: JSON
+  examples: [String!]!
+  capabilityId: String!
+  group: String!
+}
+
+input SlashHintInput {
+  chatId: UUID
+  query: String!
+  scopeType: String
+  scopeId: UUID
+}
+
+type SlashArtifact {
+  id: String
+  path: String
+  url: String
+  type: String
+}
+
+type SlashEffect {
+  type: String
+  refetch: String
+}
+
+type SlashConfirmation {
+  id: String
+  reason: String
+  risk: String
+}
+
+type SlashExecuteResult {
+  markdown: String
+  terminal: String
+  artifacts: [SlashArtifact!]!
+  effects: [SlashEffect!]!
+  confirmation: SlashConfirmation
+  raw: JSON
+  status: String!
+  error: String
+}
+
+input SlashExecuteInput {
+  chatId: UUID
+  command: String!
+  raw: String
+  args: JSON
+  confirmed: Boolean
+  confirmationId: String
+}
+
+extend type Query {
+  slashHints(input: SlashHintInput!): [SlashHint!]!
+}
+
+extend type Mutation {
+  executeSlashCommand(input: SlashExecuteInput!): SlashExecuteResult!
+}
